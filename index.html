@@ -6,19 +6,15 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: sans-serif; background: #f4f8f5; min-height: 100vh; padding: 16px; }
-
   .header { text-align: center; padding: 24px 0 18px; }
   .logo { font-size: 22px; font-weight: 800; color: #4a7c59; letter-spacing: 2px; }
   .tagline { font-size: 12px; color: #7aaa88; margin-top: 3px; letter-spacing: 1px; }
   .divider { width: 40px; height: 2px; background: #a8d5b5; margin: 10px auto 0; border-radius: 2px; }
-
   .nav { display: flex; gap: 8px; margin-bottom: 16px; }
-  .nav-btn { flex: 1; padding: 9px; border-radius: 10px; border: 1px solid #d4eadb; background: #fff; font-size: 12px; font-weight: 700; color: #4a7c59; cursor: pointer; text-align: center; letter-spacing: 0.3px; }
+  .nav-btn { flex: 1; padding: 9px; border-radius: 10px; border: 1px solid #d4eadb; background: #fff; font-size: 11px; font-weight: 700; color: #4a7c59; cursor: pointer; text-align: center; }
   .nav-btn.active { background: #4a7c59; color: #fff; border-color: #4a7c59; }
-
   .page { display: none; }
   .page.active { display: block; }
-
   .card { background: #fff; border-radius: 16px; border: 1px solid #d4eadb; padding: 20px; margin-bottom: 14px; }
   label { display: block; font-size: 11px; font-weight: 700; color: #4a7c59; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.8px; }
   input, select, textarea { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #d4eadb; font-size: 14px; color: #2d4a35; background: #f9fdf9; outline: none; font-family: sans-serif; }
@@ -26,11 +22,9 @@
   textarea { resize: vertical; min-height: 60px; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
   .full { margin-bottom: 12px; }
-
   .tech-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
   .tech-tab { padding: 10px; border-radius: 10px; border: 1px solid #d4eadb; background: #f9fdf9; font-size: 13px; font-weight: 600; color: #4a7c59; cursor: pointer; text-align: center; transition: all 0.15s; }
   .tech-tab.active { background: #4a7c59; color: #fff; border-color: #4a7c59; }
-
   .services { display: flex; flex-direction: column; gap: 7px; }
   .svc-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; border: 1px solid #d4eadb; background: #f9fdf9; cursor: pointer; transition: all 0.15s; }
   .svc-row:hover { background: #edf7f0; }
@@ -43,37 +37,29 @@
   .svc-dur select { width: 90px; padding: 4px 6px; font-size: 12px; border-radius: 7px; color: #4a7c59; background: #fff; border: 1px solid #d4eadb; }
   .svc-row:not(.active) .svc-dur select { opacity: 0.4; pointer-events: none; }
   .total-dur { font-size: 12px; color: #7aaa88; margin-top: 6px; text-align: right; }
-
   .confirm-btn { width: 100%; padding: 14px; background: #4a7c59; color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 4px; }
   .confirm-btn:hover { background: #3a6347; }
   .confirm-btn:active { transform: scale(0.98); }
-
   .action-card { background: #fff; border-radius: 16px; border: 1px solid #d4eadb; padding: 18px; margin-bottom: 12px; display: none; }
   .action-card.show { display: block; }
   .action-title { font-size: 11px; font-weight: 700; color: #4a7c59; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.8px; }
-
   .msg-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
   .msg-tab { padding: 6px 14px; border-radius: 20px; border: 1px solid #d4eadb; background: #f9fdf9; font-size: 12px; font-weight: 600; color: #4a7c59; cursor: pointer; }
   .msg-tab.active { background: #4a7c59; color: #fff; border-color: #4a7c59; }
-
   .preview-box { background: #f4f8f5; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #3a5c45; line-height: 1.8; border: 1px dashed #b5d9c0; white-space: pre-wrap; }
   .preview-label { font-size: 11px; color: #7aaa88; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; }
-
   .action-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #d4eadb; background: #f9fdf9; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 8px; text-decoration: none; color: #2d4a35; }
   .action-btn:hover { background: #edf7f0; }
   .action-btn .icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
   .wa-icon { background: #e4f7ea; }
   .cal-icon { background: #e8f0fe; }
   .action-btn .arrow { color: #a8d5b5; font-size: 18px; margin-left: auto; }
-
   .success-banner { background: #eaf7ee; border: 1px solid #7aaa88; border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #3a6347; font-weight: 600; margin-bottom: 14px; display: none; text-align: center; }
   .success-banner.show { display: block; }
   .conflict-banner { background: #fff8e1; border: 1px solid #f9c74f; border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #7d5a00; font-weight: 600; margin-bottom: 10px; display: none; }
   .conflict-banner.show { display: block; }
-
   .reset-btn { width: 100%; padding: 10px; background: transparent; color: #7aaa88; border: 1px solid #d4eadb; border-radius: 10px; font-size: 13px; cursor: pointer; margin-top: 8px; }
   .reset-btn:hover { background: #f4f8f5; }
-
   .booking-item { background: #f9fdf9; border: 1px solid #d4eadb; border-radius: 10px; padding: 10px 12px; margin-bottom: 7px; font-size: 13px; color: #2d4a35; display: flex; justify-content: space-between; align-items: center; }
   .booking-item .bname { font-weight: 600; }
   .booking-item .bdetail { font-size: 12px; color: #7aaa88; margin-top: 2px; }
@@ -82,8 +68,6 @@
   .t1-badge { background: #edf7f0; color: #4a7c59; }
   .t2-badge { background: #e8f0fe; color: #3a66b0; }
   .section-label { font-size: 11px; font-weight: 700; color: #4a7c59; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
-
-  /* Client History */
   .client-card { background: #f9fdf9; border: 1px solid #d4eadb; border-radius: 12px; padding: 14px; margin-bottom: 10px; cursor: pointer; }
   .client-card:hover { background: #edf7f0; }
   .client-name { font-size: 15px; font-weight: 700; color: #2d4a35; }
@@ -93,10 +77,36 @@
   .visit-row { font-size: 12px; color: #3a5c45; padding: 5px 0; border-bottom: 1px solid #edf7f0; }
   .visit-row:last-child { border-bottom: none; }
   .client-notes-label { font-size: 11px; color: #7aaa88; font-weight: 700; text-transform: uppercase; margin-top: 8px; margin-bottom: 4px; }
-  .client-note-text { font-size: 13px; color: #4a7c59; font-style: italic; }
   .empty-state { text-align: center; padding: 30px 0; color: #a8d5b5; font-size: 14px; }
   .search-box { margin-bottom: 12px; }
   .visit-badge { display: inline-block; background: #edf7f0; color: #4a7c59; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 700; margin-left: 6px; }
+
+  /* Payment styles */
+  .payment-box { background: #f4f8f5; border-radius: 12px; border: 1px solid #d4eadb; padding: 14px; margin-top: 12px; }
+  .payment-box-title { font-size: 11px; font-weight: 700; color: #4a7c59; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+  .pay-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end; }
+  .pay-status { display: flex; gap: 8px; margin-top: 8px; }
+  .pay-status-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #d4eadb; background: #fff; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; color: #4a7c59; }
+  .pay-status-btn.paid { background: #4a7c59; color: #fff; border-color: #4a7c59; }
+  .pay-status-btn.pending { background: #fff8e1; color: #b8860b; border-color: #f9c74f; }
+  .total-bill { font-size: 18px; font-weight: 800; color: #4a7c59; margin-top: 8px; }
+  .total-bill span { font-size: 12px; font-weight: 400; color: #7aaa88; }
+
+  /* Stats */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .stat-card { background: #fff; border-radius: 12px; border: 1px solid #d4eadb; padding: 14px; text-align: center; }
+  .stat-val { font-size: 24px; font-weight: 800; color: #4a7c59; }
+  .stat-label { font-size: 11px; color: #7aaa88; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .month-selector { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .month-nav { background: none; border: 1px solid #d4eadb; border-radius: 8px; padding: 6px 12px; cursor: pointer; color: #4a7c59; font-size: 16px; }
+  .month-title { font-size: 15px; font-weight: 700; color: #2d4a35; }
+  .payment-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #f9fdf9; border: 1px solid #d4eadb; border-radius: 10px; margin-bottom: 7px; font-size: 13px; }
+  .payment-row .pname { font-weight: 600; color: #2d4a35; }
+  .payment-row .pamount { font-weight: 700; color: #4a7c59; }
+  .payment-row .pdetail { font-size: 11px; color: #7aaa88; margin-top: 2px; }
+  .paid-badge { background: #eaf7ee; color: #3a6347; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
+  .pending-badge { background: #fff8e1; color: #b8860b; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
+  .svc-price input { width: 100px; }
 </style>
 </head>
 <body>
@@ -111,13 +121,13 @@
   <div class="nav-btn active" onclick="showPage('booking', this)">📋 Book</div>
   <div class="nav-btn" onclick="showPage('clients', this)">👤 Clients</div>
   <div class="nav-btn" onclick="showPage('today', this)">📅 Today</div>
+  <div class="nav-btn" onclick="showPage('reports', this)">💰 Reports</div>
 </div>
 
 <!-- BOOKING PAGE -->
 <div class="page active" id="page-booking">
   <div class="success-banner" id="successBanner">✓ Appointment confirmed! Use the buttons below.</div>
   <div class="conflict-banner" id="conflictBanner"></div>
-
   <div class="card">
     <div class="full">
       <label>Technician</label>
@@ -137,27 +147,27 @@
     <div class="full">
       <label>Services (select one or more)</label>
       <div class="services" id="servicesContainer">
-        <div class="svc-row" onclick="toggleService(this)">
+        <div class="svc-row" onclick="toggleService(this)" data-price="1500">
           <div class="svc-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
           <div class="svc-name">Nail Extensions</div>
           <div class="svc-dur"><select onclick="event.stopPropagation()"><option value="60">60 min</option><option value="90">90 min</option><option value="120">120 min</option></select></div>
         </div>
-        <div class="svc-row" onclick="toggleService(this)">
+        <div class="svc-row" onclick="toggleService(this)" data-price="800">
           <div class="svc-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
           <div class="svc-name">Gel Polish – Hands</div>
           <div class="svc-dur"><select onclick="event.stopPropagation()"><option value="30">30 min</option><option value="45">45 min</option><option value="60">60 min</option></select></div>
         </div>
-        <div class="svc-row" onclick="toggleService(this)">
+        <div class="svc-row" onclick="toggleService(this)" data-price="800">
           <div class="svc-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
           <div class="svc-name">Gel Polish – Feet</div>
           <div class="svc-dur"><select onclick="event.stopPropagation()"><option value="30">30 min</option><option value="45">45 min</option><option value="60">60 min</option></select></div>
         </div>
-        <div class="svc-row" onclick="toggleService(this)">
+        <div class="svc-row" onclick="toggleService(this)" data-price="500">
           <div class="svc-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
           <div class="svc-name">Extensions Removal</div>
           <div class="svc-dur"><select onclick="event.stopPropagation()"><option value="20">20 min</option><option value="30">30 min</option><option value="45">45 min</option></select></div>
         </div>
-        <div class="svc-row" onclick="toggleService(this)">
+        <div class="svc-row" onclick="toggleService(this)" data-price="400">
           <div class="svc-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
           <div class="svc-name">Gel Polish Removal</div>
           <div class="svc-dur"><select onclick="event.stopPropagation()"><option value="20">20 min</option><option value="30">30 min</option><option value="45">45 min</option></select></div>
@@ -165,9 +175,35 @@
       </div>
       <div class="total-dur" id="totalDur"></div>
     </div>
-    <div class="full">
+
+    <!-- Payment Section -->
+    <div class="payment-box">
+      <div class="payment-box-title">💰 Payment</div>
+      <div class="pay-row">
+        <div>
+          <label>Amount (₹)</label>
+          <input type="number" id="payAmount" placeholder="0" oninput="updateBill()" />
+        </div>
+        <div>
+          <label>Method</label>
+          <select id="payMethod">
+            <option>Cash</option>
+            <option>UPI</option>
+            <option>Card</option>
+          </select>
+        </div>
+      </div>
+      <div class="total-bill" id="autoBill"></div>
+      <label style="margin-top:10px;">Payment Status</label>
+      <div class="pay-status">
+        <div class="pay-status-btn paid active" id="btnPaid" onclick="setPayStatus('paid')">✅ Paid</div>
+        <div class="pay-status-btn pending" id="btnPending" onclick="setPayStatus('pending')">⏳ Pending</div>
+      </div>
+    </div>
+
+    <div class="full" style="margin-top:12px;">
       <label>Client Notes (saved to profile)</label>
-      <textarea id="notes" placeholder="e.g. Prefers nude shades, sensitive skin, loves nail art..."></textarea>
+      <textarea id="notes" placeholder="e.g. Prefers nude shades, sensitive skin..."></textarea>
     </div>
     <button class="confirm-btn" onclick="confirmAppointment()">Confirm Appointment</button>
   </div>
@@ -203,9 +239,7 @@
 <!-- CLIENTS PAGE -->
 <div class="page" id="page-clients">
   <div class="card">
-    <div class="search-box">
-      <input type="text" id="clientSearch" placeholder="Search client by name or phone..." oninput="renderClients()" />
-    </div>
+    <div class="search-box"><input type="text" id="clientSearch" placeholder="Search by name or phone..." oninput="renderClients()" /></div>
     <div id="clientsList"></div>
   </div>
 </div>
@@ -222,14 +256,50 @@
   </div>
 </div>
 
+<!-- REPORTS PAGE -->
+<div class="page" id="page-reports">
+  <div class="month-selector">
+    <button class="month-nav" onclick="changeMonth(-1)">‹</button>
+    <div class="month-title" id="monthTitle"></div>
+    <button class="month-nav" onclick="changeMonth(1)">›</button>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-val" id="statTotal">₹0</div>
+      <div class="stat-label">Total Revenue</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="statCount">0</div>
+      <div class="stat-label">Appointments</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="statPaid">₹0</div>
+      <div class="stat-label">Collected</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="statPending">₹0</div>
+      <div class="stat-label">Pending</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label" style="margin-bottom:12px;">Service Breakdown</div>
+    <div id="serviceBreakdown"></div>
+  </div>
+  <div class="card">
+    <div class="section-label" style="margin-bottom:12px;">All Payments</div>
+    <div id="paymentsList"></div>
+  </div>
+</div>
+
 <script>
-  let selectedTech = 1;
-  let bookings = [];
-  let clients = {};
-  let lastBooking = null;
+  let selectedTech = 1, payStatus = 'paid', bookings = [], clients = {}, lastBooking = null;
+  let reportMonth = new Date().getMonth(), reportYear = new Date().getFullYear();
+
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
   document.getElementById('apptDate').valueAsDate = new Date();
   document.getElementById('apptTime').value = '10:00';
+  updateMonthTitle();
 
   function showPage(name, btn) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -238,17 +308,24 @@
     btn.classList.add('active');
     if (name === 'clients') renderClients();
     if (name === 'today') renderToday();
+    if (name === 'reports') renderReports();
   }
 
   function selectTech(el, num) {
     document.querySelectorAll('.tech-tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    selectedTech = num;
+    el.classList.add('active'); selectedTech = num;
+  }
+
+  function setPayStatus(s) {
+    payStatus = s;
+    document.getElementById('btnPaid').classList.toggle('active', s === 'paid');
+    document.getElementById('btnPending').classList.toggle('active', s === 'pending');
   }
 
   function toggleService(row) {
     row.classList.toggle('active');
     updateTotalDur();
+    autoFillPrice();
   }
 
   function updateTotalDur() {
@@ -259,18 +336,31 @@
     document.getElementById('totalDur').textContent = `Total duration: ${total} min`;
   }
 
+  function autoFillPrice() {
+    const active = document.querySelectorAll('.svc-row.active');
+    let total = 0;
+    active.forEach(r => total += parseInt(r.dataset.price || 0));
+    document.getElementById('payAmount').value = total || '';
+    document.getElementById('autoBill').textContent = total ? `Total: ₹${total.toLocaleString('en-IN')}` : '';
+  }
+
+  function updateBill() {
+    const v = parseInt(document.getElementById('payAmount').value) || 0;
+    document.getElementById('autoBill').textContent = v ? `Total: ₹${v.toLocaleString('en-IN')}` : '';
+  }
+
   document.querySelectorAll('.svc-dur select').forEach(sel => {
     sel.addEventListener('change', updateTotalDur);
     sel.addEventListener('click', e => e.stopPropagation());
   });
 
-  function formatDate(dateStr) {
-    const d = new Date(dateStr + 'T00:00:00');
+  function formatDate(ds) {
+    const d = new Date(ds + 'T00:00:00');
     return d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   }
 
-  function formatTime(timeStr) {
-    const [h, m] = timeStr.split(':');
+  function formatTime(ts) {
+    const [h, m] = ts.split(':');
     const hr = parseInt(h), ampm = hr >= 12 ? 'PM' : 'AM', hr12 = hr % 12 || 12;
     return `${hr12}:${m} ${ampm}`;
   }
@@ -286,9 +376,9 @@
     });
   }
 
-  function buildMsg(type, name, phone, formattedDate, formattedTime, serviceList, totalDur) {
-    if (type === 'confirm') return `Hi ${name}! 🌿✨\n\nYour appointment at *The Nail Villa* has been successfully booked! 💅\n\n📅 *Day & Date:* ${formattedDate}\n⏰ *Time:* ${formattedTime}\n💆‍♀️ *Service:* ${serviceList}\n⏱️ *Duration:* ${totalDur} mins\n\n⏳ Kindly arrive on time so we can give you the best service. If you need to reschedule, please inform us at least a few hours in advance. 🙏\n\n🤍 We look forward to pampering you! Thank you.\n\n📍 https://maps.app.goo.gl/afo8uQNsUaKDxkqt8`;
-    if (type === 'reminder') return `Hi ${name}! 🌿\n\nThis is a gentle reminder that you have an appointment at *The Nail Villa* tomorrow at ${formattedTime} for your ${serviceList}. 💅\n\nKindly confirm if you'll be able to make it. 🙏\n\nLooking forward to seeing you! 🤍`;
+  function buildMsg(type, name, phone, fd, ft, sl, dur) {
+    if (type === 'confirm') return `Hi ${name}! 🌿✨\n\nYour appointment at *The Nail Villa* has been successfully booked! 💅\n\n📅 *Day & Date:* ${fd}\n⏰ *Time:* ${ft}\n💆‍♀️ *Service:* ${sl}\n⏱️ *Duration:* ${dur} mins\n\n⏳ Kindly arrive on time so we can give you the best service. If you need to reschedule, please inform us at least a few hours in advance. 🙏\n\n🤍 We look forward to pampering you! Thank you.\n\n📍 https://maps.app.goo.gl/afo8uQNsUaKDxkqt8`;
+    if (type === 'reminder') return `Hi ${name}! 🌿\n\nThis is a gentle reminder that you have an appointment at *The Nail Villa* tomorrow at ${ft} for your ${sl}. 💅\n\nKindly confirm if you'll be able to make it. 🙏\n\nLooking forward to seeing you! 🤍`;
     if (type === 'thankyou') return `Hi ${name}! 🌸\n\nThank you for visiting *The Nail Villa*! ✨\n\nWe loved having you with us and hope you loved your nails. 💅\n\nLooking forward to seeing you again soon! 🤍\n\n— *The Nail Villa* 🌿`;
   }
 
@@ -296,11 +386,10 @@
     if (!lastBooking) return;
     document.querySelectorAll('.msg-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-    const { name, phone, formattedDate, formattedTime, serviceList, totalDur } = lastBooking;
-    const msg = buildMsg(type, name, phone, formattedDate, formattedTime, serviceList, totalDur);
+    const { name, phone, fd, ft, sl, dur } = lastBooking;
+    const msg = buildMsg(type, name, phone, fd, ft, sl, dur);
     document.getElementById('msgPreview').innerText = msg;
-    const waPhone = phone.replace(/[^0-9]/g, '');
-    document.getElementById('waBtn').href = `https://wa.me/${waPhone}?text=${encodeURIComponent(msg)}`;
+    document.getElementById('waBtn').href = `https://wa.me/${phone.replace(/[^0-9]/g,'')}?text=${encodeURIComponent(msg)}`;
   }
 
   function confirmAppointment() {
@@ -309,54 +398,47 @@
     const date = document.getElementById('apptDate').value;
     const time = document.getElementById('apptTime').value;
     const notes = document.getElementById('notes').value.trim();
+    const amount = parseInt(document.getElementById('payAmount').value) || 0;
+    const method = document.getElementById('payMethod').value;
     const activeRows = document.querySelectorAll('.svc-row.active');
 
-    if (!name || !phone || !date || !time || !activeRows.length) {
-      alert('Please fill in all fields and select at least one service.');
-      return;
-    }
+    if (!name || !phone || !date || !time || !activeRows.length) { alert('Please fill in all fields and select at least one service.'); return; }
 
     let totalDur = 0, serviceNames = [];
     activeRows.forEach(r => { serviceNames.push(r.querySelector('.svc-name').textContent); totalDur += parseInt(r.querySelector('select').value); });
 
     const conflicts = checkConflict(date, time, totalDur);
     const cb = document.getElementById('conflictBanner');
-    if (conflicts.length) {
-      cb.textContent = `⚠️ ${selectedTech===1?'Rono':'Anit'} already has a booking at this time (${conflicts[0].name}). Please choose a different time or technician.`;
-      cb.classList.add('show'); return;
-    }
+    if (conflicts.length) { cb.textContent = `⚠️ ${selectedTech===1?'Rono':'Anit'} already has a booking at this time (${conflicts[0].name}). Please choose a different time or technician.`; cb.classList.add('show'); return; }
     cb.classList.remove('show');
 
-    const formattedDate = formatDate(date);
-    const formattedTime = formatTime(time);
-    const serviceList = serviceNames.join(', ');
+    const fd = formatDate(date), ft = formatTime(time), sl = serviceNames.join(', ');
+    const firstName = name.split(' ')[0];
     const techName = selectedTech === 1 ? 'Rono' : 'Anit';
 
-    bookings.push({ name, phone, date, time, duration: totalDur, tech: selectedTech, services: serviceList });
+    bookings.push({ name, phone, date, time, duration: totalDur, tech: selectedTech, services: sl, amount, method, payStatus, techName, serviceNames });
 
     const key = phone.replace(/[^0-9]/g, '');
     if (!clients[key]) clients[key] = { name, phone, visits: [], notes: '' };
-    clients[key].visits.unshift({ date: formattedDate, time: formattedTime, services: serviceList, tech: techName });
+    clients[key].visits.unshift({ date: fd, time: ft, services: sl, tech: techName, amount, payStatus });
     if (notes) clients[key].notes = notes;
 
-    lastBooking = { name, phone, formattedDate, formattedTime, serviceList, totalDur };
+    lastBooking = { name: firstName, phone, fd, ft, sl, dur: totalDur };
 
-    const msg = buildMsg('confirm', name, phone, formattedDate, formattedTime, serviceList, totalDur);
+    const msg = buildMsg('confirm', firstName, phone, fd, ft, sl, totalDur);
     document.getElementById('msgPreview').innerText = msg;
-    document.querySelectorAll('.msg-tab').forEach((t,i) => t.classList.toggle('active', i===0));
-
-    const waPhone = phone.replace(/[^0-9]/g, '');
-    document.getElementById('waBtn').href = `https://wa.me/${waPhone}?text=${encodeURIComponent(msg)}`;
+    document.querySelectorAll('.msg-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+    document.getElementById('waBtn').href = `https://wa.me/${phone.replace(/[^0-9]/g,'')}?text=${encodeURIComponent(msg)}`;
 
     const dateStr = date.replace(/-/g, '');
     const [h, m] = time.split(':');
     const startDT = dateStr + 'T' + h + m + '00';
-    const endMs = parseInt(h)*60 + parseInt(m) + totalDur;
+    const endMs = parseInt(h)*60+parseInt(m)+totalDur;
     const endH = String(Math.floor(endMs/60)%24).padStart(2,'0');
     const endM = String(endMs%60).padStart(2,'0');
     const endDT = dateStr + 'T' + endH + endM + '00';
-    const calTitle = encodeURIComponent(`[${techName}] ${name} – ${serviceList} @ The Nail Villa`);
-    const calDetails = encodeURIComponent(`Technician: ${techName}\nServices: ${serviceList}\nDuration: ${totalDur} mins\nClient: ${name}\nPhone: ${phone}${notes?'\nNotes: '+notes:''}`);
+    const calTitle = encodeURIComponent(`[${techName}] ${name} – ${sl} @ The Nail Villa`);
+    const calDetails = encodeURIComponent(`Technician: ${techName}\nServices: ${sl}\nDuration: ${totalDur} mins\nAmount: ₹${amount} (${payStatus})\nClient: ${name}\nPhone: ${phone}${notes?'\nNotes: '+notes:''}`);
     document.getElementById('calBtn').href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calTitle}&dates=${startDT}/${endDT}&details=${calDetails}&location=The+Nail+Villa`;
 
     document.getElementById('successBanner').classList.add('show');
@@ -380,9 +462,9 @@
           <div style="color:#a8d5b5;font-size:18px;">›</div>
         </div>
         <div class="client-detail">
-          ${c.notes ? `<div class="client-notes-label">Notes</div><div class="client-note-text">${c.notes}</div>` : ''}
+          ${c.notes ? `<div class="client-notes-label">Notes</div><div style="font-size:13px;color:#4a7c59;font-style:italic;">${c.notes}</div>` : ''}
           <div class="client-notes-label" style="margin-top:${c.notes?'10px':'0'};">Visit History</div>
-          ${c.visits.map(v => `<div class="visit-row">📅 ${v.date} at ${v.time} · ${v.services} <span class="tech-badge ${v.tech==='Rono'?'t1-badge':'t2-badge'}">${v.tech}</span></div>`).join('')}
+          ${c.visits.map(v => `<div class="visit-row">📅 ${v.date} at ${v.time} · ${v.services} · ₹${(v.amount||0).toLocaleString('en-IN')} <span class="${v.payStatus==='paid'?'paid-badge':'pending-badge'}">${v.payStatus}</span></div>`).join('')}
         </div>
       </div>`).join('');
   }
@@ -392,26 +474,73 @@
     const tb = bookings.filter(b => b.date === today);
     const rono = tb.filter(b => b.tech === 1).sort((a,b) => toMins(a.time)-toMins(b.time));
     const anit = tb.filter(b => b.tech === 2).sort((a,b) => toMins(a.time)-toMins(b.time));
-
     const render = (arr, el) => {
       if (!arr.length) { document.getElementById(el).innerHTML = `<div style="font-size:13px;color:#a8d5b5;padding:8px 0;">No bookings today 🌿</div>`; return; }
-      document.getElementById(el).innerHTML = arr.map((b,i) => `
+      document.getElementById(el).innerHTML = arr.map(b => `
         <div class="booking-item">
           <div>
-            <div class="bname">${b.name}</div>
-            <div class="bdetail">${formatTime(b.time)} · ${b.duration} min · ${b.services}</div>
+            <div class="bname">${b.name} <span class="${b.payStatus==='paid'?'paid-badge':'pending-badge'}">${b.payStatus==='paid'?'Paid':'Pending'}</span></div>
+            <div class="bdetail">${formatTime(b.time)} · ${b.duration} min · ${b.services} · ₹${(b.amount||0).toLocaleString('en-IN')}</div>
           </div>
-          <button class="bdel" onclick="deleteBooking(event, ${bookings.indexOf(b)}, '${el}')">✕</button>
+          <button class="bdel" onclick="deleteBooking(event, ${bookings.indexOf(b)})">✕</button>
         </div>`).join('');
     };
-    render(rono, 'todayRono');
-    render(anit, 'todayAnit');
+    render(rono, 'todayRono'); render(anit, 'todayAnit');
   }
 
-  function deleteBooking(e, i, el) {
-    e.stopPropagation();
-    bookings.splice(i, 1);
-    renderToday();
+  function deleteBooking(e, i) { e.stopPropagation(); bookings.splice(i, 1); renderToday(); }
+
+  function updateMonthTitle() {
+    document.getElementById('monthTitle').textContent = `${MONTHS[reportMonth]} ${reportYear}`;
+  }
+
+  function changeMonth(dir) {
+    reportMonth += dir;
+    if (reportMonth > 11) { reportMonth = 0; reportYear++; }
+    if (reportMonth < 0) { reportMonth = 11; reportYear--; }
+    updateMonthTitle(); renderReports();
+  }
+
+  function renderReports() {
+    const mb = bookings.filter(b => {
+      const d = new Date(b.date + 'T00:00:00');
+      return d.getMonth() === reportMonth && d.getFullYear() === reportYear;
+    });
+
+    const total = mb.reduce((s, b) => s + (b.amount||0), 0);
+    const paid = mb.filter(b => b.payStatus === 'paid').reduce((s, b) => s + (b.amount||0), 0);
+    const pending = mb.filter(b => b.payStatus === 'pending').reduce((s, b) => s + (b.amount||0), 0);
+
+    document.getElementById('statTotal').textContent = `₹${total.toLocaleString('en-IN')}`;
+    document.getElementById('statCount').textContent = mb.length;
+    document.getElementById('statPaid').textContent = `₹${paid.toLocaleString('en-IN')}`;
+    document.getElementById('statPending').textContent = `₹${pending.toLocaleString('en-IN')}`;
+
+    // Service breakdown
+    const svcCount = {};
+    mb.forEach(b => b.serviceNames.forEach(s => { svcCount[s] = (svcCount[s]||0) + 1; }));
+    const sbEl = document.getElementById('serviceBreakdown');
+    if (!Object.keys(svcCount).length) { sbEl.innerHTML = `<div class="empty-state">No data yet 🌿</div>`; }
+    else sbEl.innerHTML = Object.entries(svcCount).sort((a,b)=>b[1]-a[1]).map(([s,c]) => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #edf7f0;font-size:13px;">
+        <span style="color:#2d4a35;">💅 ${s}</span>
+        <span style="font-weight:700;color:#4a7c59;">${c} time${c!==1?'s':''}</span>
+      </div>`).join('');
+
+    // Payments list
+    const plEl = document.getElementById('paymentsList');
+    if (!mb.length) { plEl.innerHTML = `<div class="empty-state">No payments this month 🌿</div>`; return; }
+    plEl.innerHTML = mb.sort((a,b) => b.date.localeCompare(a.date)).map(b => `
+      <div class="payment-row">
+        <div>
+          <div class="pname">${b.name} <span class="tech-badge ${b.tech===1?'t1-badge':'t2-badge'}">${b.techName}</span></div>
+          <div class="pdetail">${formatDate(b.date)} · ${b.services} · ${b.method}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="pamount">₹${(b.amount||0).toLocaleString('en-IN')}</div>
+          <span class="${b.payStatus==='paid'?'paid-badge':'pending-badge'}">${b.payStatus}</span>
+        </div>
+      </div>`).join('');
   }
 
   function resetForm() {
@@ -420,13 +549,15 @@
     document.getElementById('apptDate').valueAsDate = new Date();
     document.getElementById('apptTime').value = '10:00';
     document.getElementById('notes').value = '';
+    document.getElementById('payAmount').value = '';
+    document.getElementById('autoBill').textContent = '';
     document.querySelectorAll('.svc-row').forEach(r => r.classList.remove('active'));
     document.getElementById('totalDur').textContent = '';
     document.getElementById('successBanner').classList.remove('show');
     document.getElementById('conflictBanner').classList.remove('show');
     document.getElementById('waCard').classList.remove('show');
     document.getElementById('calCard').classList.remove('show');
-    lastBooking = null;
+    setPayStatus('paid'); lastBooking = null;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 </script>
