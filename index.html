@@ -1,540 +1,659 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: sans-serif; background: #f4f8f5; min-height: 100vh; padding: 16px; }
-  .header { text-align: center; padding: 24px 0 18px; }
-  .logo { font-size: 22px; font-weight: 800; color: #4a7c59; letter-spacing: 2px; }
-  .tagline { font-size: 12px; color: #7aaa88; margin-top: 3px; letter-spacing: 1px; }
-  .divider { width: 40px; height: 2px; background: #a8d5b5; margin: 10px auto 0; border-radius: 2px; }
-  .nav { display: flex; gap: 8px; margin-bottom: 16px; }
-  .nav-btn { flex: 1; padding: 9px; border-radius: 10px; border: 1px solid #d4eadb; background: #fff; font-size: 11px; font-weight: 700; color: #4a7c59; cursor: pointer; text-align: center; }
-  .nav-btn.active { background: #4a7c59; color: #fff; border-color: #4a7c59; }
-  .page { display: none; }
-  .page.active { display: block; }
-  .card { background: #fff; border-radius: 16px; border: 1px solid #d4eadb; padding: 20px; margin-bottom: 14px; }
-  label { display: block; font-size: 11px; font-weight: 700; color: #4a7c59; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.8px; }
-  input, select, textarea { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #d4eadb; font-size: 14px; color: #2d4a35; background: #f9fdf9; outline: none; font-family: sans-serif; }
-  input:focus, select:focus, textarea:focus { border-color: #4a7c59; background: #fff; }
-  textarea { resize: vertical; min-height: 60px; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-  .full { margin-bottom: 12px; }
-  .tech-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-  .tech-tab { padding: 10px; border-radius: 10px; border: 1px solid #d4eadb; background: #f9fdf9; font-size: 13px; font-weight: 600; color: #4a7c59; cursor: pointer; text-align: center; }
-  .tech-tab.active { background: #4a7c59; color: #fff; border-color: #4a7c59; }
-  .services { display: flex; flex-direction: column; gap: 7px; }
-  .svc-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; border: 1px solid #d4eadb; background: #f9fdf9; cursor: pointer; }
-  .svc-row:hover { background: #edf7f0; }
-  .svc-row.active { background: #edf7f0; border-color: #4a7c59; }
-  .svc-check { width: 18px; height: 18px; border-radius: 5px; border: 2px solid #d4eadb; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .svc-row.active .svc-check { background: #4a7c59; border-color: #4a7c59; }
-  .svc-check svg { display: none; }
-  .svc-row.active .svc-check svg { display: block; }
-  .svc-name { font-size: 13px; font-weight: 500; color: #2d4a35; flex: 1; }
-  .svc-dur select { width: 90px; padding: 4px 6px; font-size: 12px; border-radius: 7px; color: #4a7c59; background: #fff; border: 1px solid #d4eadb; }
-  .svc-row:not(.active) .svc-dur select { opacity: 0.4; pointer-events: none; }
-  .total-dur { font-size: 12px; color: #7aaa88; margin-top: 6px; text-align: right; }
-  .confirm-btn { width: 100%; padding: 14px; background: #4a7c59; color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 4px; }
-  .confirm-btn:hover { background: #3a6347; }
-  .action-card { background: #fff; border-radius: 16px; border: 1px solid #d4eadb; padding: 18px; margin-bottom: 12px; display: none; }
-  .action-card.show { display: block; }
-  .action-title { font-size: 11px; font-weight: 700; color: #4a7c59; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.8px; }
-  .msg-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
-  .msg-tab { padding: 6px 14px; border-radius: 20px; border: 1px solid #d4eadb; background: #f9fdf9; font-size: 12px; font-weight: 600; color: #4a7c59; cursor: pointer; }
-  .msg-tab.active { background: #4a7c59; color: #fff; border-color: #4a7c59; }
-  .preview-box { background: #f4f8f5; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #3a5c45; line-height: 1.8; border: 1px dashed #b5d9c0; white-space: pre-wrap; }
-  .preview-label { font-size: 11px; color: #7aaa88; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; }
-  .action-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #d4eadb; background: #f9fdf9; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 8px; text-decoration: none; color: #2d4a35; }
-  .action-btn:hover { background: #edf7f0; }
-  .action-btn .icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
-  .wa-icon { background: #e4f7ea; }
-  .cal-icon { background: #e8f0fe; }
-  .action-btn .arrow { color: #a8d5b5; font-size: 18px; margin-left: auto; }
-  .success-banner { background: #eaf7ee; border: 1px solid #7aaa88; border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #3a6347; font-weight: 600; margin-bottom: 14px; display: none; text-align: center; }
-  .success-banner.show { display: block; }
-  .conflict-banner { background: #fff8e1; border: 1px solid #f9c74f; border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #7d5a00; font-weight: 600; margin-bottom: 10px; display: none; }
-  .conflict-banner.show { display: block; }
-  .reset-btn { width: 100%; padding: 10px; background: transparent; color: #7aaa88; border: 1px solid #d4eadb; border-radius: 10px; font-size: 13px; cursor: pointer; margin-top: 8px; }
-  .reset-btn:hover { background: #f4f8f5; }
-  .booking-item { background: #f9fdf9; border: 1px solid #d4eadb; border-radius: 10px; padding: 10px 12px; margin-bottom: 7px; display: flex; justify-content: space-between; align-items: center; }
-  .booking-item .bname { font-size: 13px; font-weight: 600; color: #2d4a35; }
-  .booking-item .bdetail { font-size: 12px; color: #7aaa88; margin-top: 2px; }
-  .booking-item .bdel { background: none; border: none; color: #c0a0a0; font-size: 16px; cursor: pointer; }
-  .tech-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
-  .t1-badge { background: #edf7f0; color: #4a7c59; }
-  .t2-badge { background: #e8f0fe; color: #3a66b0; }
-  .section-label { font-size: 11px; font-weight: 700; color: #4a7c59; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
-  .client-card { background: #f9fdf9; border: 1px solid #d4eadb; border-radius: 12px; padding: 14px; margin-bottom: 10px; cursor: pointer; }
-  .client-name { font-size: 15px; font-weight: 700; color: #2d4a35; }
-  .client-meta { font-size: 12px; color: #7aaa88; margin-top: 2px; }
-  .client-detail { display: none; margin-top: 10px; border-top: 1px solid #d4eadb; padding-top: 10px; }
-  .client-card.open .client-detail { display: block; }
-  .visit-row { font-size: 12px; color: #3a5c45; padding: 5px 0; border-bottom: 1px solid #edf7f0; }
-  .visit-row:last-child { border-bottom: none; }
-  .visit-badge { display: inline-block; background: #edf7f0; color: #4a7c59; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 700; margin-left: 6px; }
-  .empty-state { text-align: center; padding: 30px 0; color: #a8d5b5; font-size: 14px; }
-  .payment-box { background: #f4f8f5; border-radius: 12px; border: 1px solid #d4eadb; padding: 14px; margin-top: 12px; }
-  .payment-box-title { font-size: 11px; font-weight: 700; color: #4a7c59; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
-  .pay-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .pay-status { display: flex; gap: 8px; margin-top: 8px; }
-  .pay-status-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #d4eadb; background: #fff; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; color: #4a7c59; }
-  .pay-status-btn.sel-paid { background: #4a7c59; color: #fff; border-color: #4a7c59; }
-  .pay-status-btn.sel-pending { background: #fff8e1; color: #b8860b; border-color: #f9c74f; }
-  .auto-bill { font-size: 18px; font-weight: 800; color: #4a7c59; margin-top: 8px; }
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .stat-card { background: #fff; border-radius: 12px; border: 1px solid #d4eadb; padding: 14px; text-align: center; }
-  .stat-val { font-size: 22px; font-weight: 800; color: #4a7c59; }
-  .stat-label { font-size: 11px; color: #7aaa88; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .month-selector { display: flex; align-items: center; justify-content: space-between; }
-  .month-nav { background: none; border: 1px solid #d4eadb; border-radius: 8px; padding: 6px 14px; cursor: pointer; color: #4a7c59; font-size: 16px; }
-  .month-title { font-size: 15px; font-weight: 700; color: #2d4a35; }
-  .payment-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #f9fdf9; border: 1px solid #d4eadb; border-radius: 10px; margin-bottom: 7px; }
-  .pname { font-size: 13px; font-weight: 600; color: #2d4a35; }
-  .pamount { font-size: 13px; font-weight: 700; color: #4a7c59; }
-  .pdetail { font-size: 11px; color: #7aaa88; margin-top: 2px; }
-  .paid-badge { background: #eaf7ee; color: #3a6347; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
-  .pending-badge { background: #fff8e1; color: #b8860b; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
-  .report-toggle { display: flex; gap: 8px; margin-bottom: 12px; }
-</style>
-</head>
-<body>
+import { useState, useEffect } from "react";
 
-<div class="header">
-  <div class="logo">THE NAIL VILLA</div>
-  <div class="tagline">Appointment Manager</div>
-  <div class="divider"></div>
-</div>
+const SERVICES = [
+  { id: 1, name: "Nail Extensions", duration: 120, price: 2500, icon: "💅" },
+  { id: 2, name: "Extensions Removal", duration: 30, price: 500, icon: "✨" },
+  { id: 3, name: "Gel Polish Removal", duration: 20, price: 300, icon: "🧴" },
+  { id: 4, name: "Overlays", duration: 90, price: 1800, icon: "💎" },
+  { id: 5, name: "Hand Gel Polish", duration: 60, price: 1200, icon: "🤚" },
+  { id: 6, name: "Feet Gel Polish", duration: 60, price: 1200, icon: "🦶" },
+];
 
-<div class="nav">
-  <div class="nav-btn active" onclick="showPage('booking', this)">📋 Book</div>
-  <div class="nav-btn" onclick="showPage('clients', this)">👤 Clients</div>
-  <div class="nav-btn" onclick="showPage('today', this)">📅 Today</div>
-  <div class="nav-btn" onclick="showPage('reports', this)">💰 Reports</div>
-</div>
+const MAP_LINK = "https://maps.app.goo.gl/afo8uQNsUaKDxkqt8";
+const sk = (k) => `nv3:${k}`;
+const fmtDateNice = (d) => { const dt = new Date(d + "T00:00:00"); return `${dt.toLocaleDateString("en-IN", { weekday: "long" })} ${dt.getDate()} ${dt.toLocaleDateString("en-IN", { month: "long" })}, ${dt.getFullYear()}`; };
+const fmtDateShort = (d) => new Date(d + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+const fmtTime = (t) => { const [h, m] = t.split(":").map(Number); return `${h % 12 || 12}:${m.toString().padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`; };
+const fmtDur = (m) => m >= 60 ? `${Math.floor(m / 60)}h${m % 60 ? ` ${m % 60}m` : ""}` : m + "m";
+const todayStr = () => new Date().toISOString().split("T")[0];
+const daysAgo = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString().split("T")[0]; };
+const firstName = (name) => (name || "").trim().split(/\s+/)[0];
 
-<!-- BOOKING PAGE -->
-<div class="page active" id="page-booking">
-  <div class="success-banner" id="successBanner">✓ Appointment confirmed! Use the buttons below.</div>
-  <div class="conflict-banner" id="conflictBanner"></div>
-  <div class="card">
-    <div class="full">
-      <label>Technician</label>
-      <div class="tech-tabs">
-        <div class="tech-tab active" onclick="selectTech(this,1)">💅 Rono</div>
-        <div class="tech-tab" onclick="selectTech(this,2)">💅 Anit</div>
-      </div>
-    </div>
-    <div class="row">
-      <div><label>Client Name</label><input type="text" id="clientName" placeholder="e.g. Priya Shah" /></div>
-      <div><label>Phone Number</label><input type="text" id="clientPhone" placeholder="+91 98765 43210" /></div>
-    </div>
-    <div class="row">
-      <div><label>Date</label><input type="date" id="apptDate" /></div>
-      <div><label>Start Time</label><input type="time" id="apptTime" /></div>
-    </div>
-    <div class="full">
-      <label>Services (select one or more)</label>
-      <div class="services">
-        <div class="svc-row" onclick="toggleService(this)" data-price="1500">
-          <div class="svc-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <div class="svc-name">Nail Extensions</div>
-          <div class="svc-dur"><select onclick="event.stopPropagation()"><option value="60">60 min</option><option value="90">90 min</option><option value="120">120 min</option></select></div>
-        </div>
-        <div class="svc-row" onclick="toggleService(this)" data-price="800">
-          <div class="svc-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <div class="svc-name">Gel Polish – Hands</div>
-          <div class="svc-dur"><select onclick="event.stopPropagation()"><option value="30">30 min</option><option value="45">45 min</option><option value="60">60 min</option></select></div>
-        </div>
-        <div class="svc-row" onclick="toggleService(this)" data-price="800">
-          <div class="svc-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <div class="svc-name">Gel Polish – Feet</div>
-          <div class="svc-dur"><select onclick="event.stopPropagation()"><option value="30">30 min</option><option value="45">45 min</option><option value="60">60 min</option></select></div>
-        </div>
-        <div class="svc-row" onclick="toggleService(this)" data-price="500">
-          <div class="svc-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <div class="svc-name">Extensions Removal</div>
-          <div class="svc-dur"><select onclick="event.stopPropagation()"><option value="20">20 min</option><option value="30">30 min</option><option value="45">45 min</option></select></div>
-        </div>
-        <div class="svc-row" onclick="toggleService(this)" data-price="400">
-          <div class="svc-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <div class="svc-name">Gel Polish Removal</div>
-          <div class="svc-dur"><select onclick="event.stopPropagation()"><option value="20">20 min</option><option value="30">30 min</option><option value="45">45 min</option></select></div>
-        </div>
-      </div>
-      <div class="total-dur" id="totalDur"></div>
-    </div>
-    <div class="payment-box">
-      <div class="payment-box-title">💰 Payment</div>
-      <div class="pay-row">
-        <div><label>Amount (₹)</label><input type="number" id="payAmount" placeholder="0" oninput="updateBill()" /></div>
-        <div><label>Method</label><select id="payMethod"><option>Cash</option><option>UPI</option><option>Card</option></select></div>
-      </div>
-      <div class="auto-bill" id="autoBill"></div>
-      <label style="margin-top:10px;">Payment Status</label>
-      <div class="pay-status">
-        <div class="pay-status-btn sel-paid" id="btnPaid" onclick="setPayStatus('paid')">✅ Paid</div>
-        <div class="pay-status-btn" id="btnPending" onclick="setPayStatus('pending')">⏳ Pending</div>
-      </div>
-    </div>
-    <div class="full" style="margin-top:12px;">
-      <label>Client Notes</label>
-      <textarea id="notes" placeholder="e.g. Prefers nude shades, sensitive skin..."></textarea>
-    </div>
-    <button class="confirm-btn" onclick="confirmAppointment()">Confirm Appointment</button>
-  </div>
+const getConfMsg = (b) => { const dur = b.services.reduce((s, sn) => s + (SERVICES.find(sv => sv.name === sn)?.duration || 0), 0); return `Hi ${firstName(b.name)}! Your appointment at *The Nail Villa* has been successfully booked!\n\n*Day & Date:* ${fmtDateNice(b.date)}\n*Time:* ${fmtTime(b.time)}\n*Service:* ${b.services.join(", ")}\n*Duration:* ${dur} mins\n\nKindly arrive on time so we can give you the best service.\n\nIf you need to reschedule, please inform us at least a few hours in advance.\n\nWe look forward to pampering you!\n\nThank you.\n${MAP_LINK}`; };
+const getRemMsg = (b) => `Hi ${firstName(b.name)}!\n\nThis is a gentle reminder that you have an appointment at *The Nail Villa* today at *${fmtTime(b.time)}* for your *${b.services.join(", ")}*.\n\nKindly confirm if you'll be able to make it.\n\nLooking forward to seeing you! 💅`;
+const getTyMsg = (b) => `Hi ${firstName(b.name)},\n\nThank you for visiting The Nail Villa 💅\nIt was a pleasure having you!\nHope you loved your nails—see you again soon 💖`;
+const getBookAgainMsg = (c) => `Hi ${firstName(c.name)}!\n\nWe miss you at *The Nail Villa*! It's been a while since your last visit.\n\nWould you like to book your next appointment? We have some amazing new designs waiting for you! 💅✨\n\n${MAP_LINK}`;
+const getBdayMsg = (c) => `Happy Birthday ${firstName(c.name)}! 🎂🌸\n\nWishing you a wonderful day from all of us at *The Nail Villa*! 💖\n\nAs a birthday treat, enjoy a special discount on your next visit! Come pamper yourself! 💅✨\n\n${MAP_LINK}`;
 
-  <div class="action-card" id="waCard">
-    <div class="action-title">WhatsApp Messages</div>
-    <div class="msg-tabs">
-      <div class="msg-tab active" onclick="showMsg('confirm',this)">Confirmation</div>
-      <div class="msg-tab" onclick="showMsg('reminder',this)">Reminder</div>
-      <div class="msg-tab" onclick="showMsg('thankyou',this)">Thank You</div>
-    </div>
-    <div class="preview-label">Message Preview</div>
-    <div class="preview-box" id="msgPreview"></div>
-    <br>
-    <a class="action-btn" id="waBtn" href="#" target="_blank">
-      <div class="icon wa-icon">💬</div><span>Open WhatsApp &amp; Send</span><div class="arrow">›</div>
-    </a>
-  </div>
+const openWA = (phone, msg) => { const num = phone.replace(/\D/g, ""); window.open(`https://wa.me/${num.length === 10 ? "91" + num : num}?text=${encodeURIComponent(msg)}`, "_blank"); };
+const openCal = (b) => { const totalMin = b.services.reduce((s, sn) => s + (SERVICES.find(sv => sv.name === sn)?.duration || 60), 0); const start = new Date(`${b.date}T${b.time}:00`); const end = new Date(start.getTime() + totalMin * 60000); const fmt = (d) => d.toISOString().replace(/[-:]/g, "").split(".")[0]; window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("Nail Villa - " + b.name)}&dates=${fmt(start)}/${fmt(end)}&details=${encodeURIComponent(`Client: ${b.name}\nPhone: ${b.phone}\nServices: ${b.services.join(", ")}`)}&location=${encodeURIComponent("The Nail Villa, Pimpri-Chinchwad, Pune")}`, "_blank"); };
 
-  <div class="action-card" id="calCard">
-    <div class="action-title">Google Calendar</div>
-    <a class="action-btn" id="calBtn" href="#" target="_blank">
-      <div class="icon cal-icon">📅</div><span>Add to Google Calendar</span><div class="arrow">›</div>
-    </a>
-    <button class="reset-btn" onclick="resetForm()">+ New Appointment</button>
-  </div>
-</div>
+const INIT = { bookings: [], clients: [], expenses: [], gallery: [], waitlist: [], payments: [] };
 
-<!-- CLIENTS PAGE -->
-<div class="page" id="page-clients">
-  <div class="card">
-    <div class="full"><input type="text" id="clientSearch" placeholder="Search by name or phone..." oninput="renderClients()" /></div>
-    <div id="clientsList"></div>
-  </div>
-</div>
+export default function App() {
+  const [tab, setTab] = useState("book");
+  const [data, setData] = useState(INIT);
+  const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState(null);
+  const [form, setForm] = useState({ name: "", phone: "", date: "", time: "", services: [], notes: "", price: "" });
+  const [editId, setEditId] = useState(null);
+  const [filterDate, setFilterDate] = useState(todayStr());
+  const [searchQ, setSearchQ] = useState("");
+  const [clientView, setClientView] = useState(null);
+  const [expForm, setExpForm] = useState({ item: "", amount: "", date: todayStr(), category: "supplies" });
+  const [galleryForm, setGalleryForm] = useState({ clientName: "", service: "", notes: "", imageUrl: "" });
+  const [promoMsg, setPromoMsg] = useState("");
+  const [dashPeriod, setDashPeriod] = useState("week");
+  const [subTab, setSubTab] = useState("");
+  const [waitForm, setWaitForm] = useState({ name: "", phone: "", service: "", notes: "" });
+  const [payForm, setPayForm] = useState({ bookingId: "", amount: "", method: "cash", notes: "" });
+  const [payMonth, setPayMonth] = useState(() => { const d = new Date(); return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}`; });
+  const [payDay, setPayDay] = useState(todayStr());
 
-<!-- TODAY PAGE -->
-<div class="page" id="page-today">
-  <div class="card"><div class="section-label">Rono's Bookings</div><div id="todayRono"></div></div>
-  <div class="card"><div class="section-label">Anit's Bookings</div><div id="todayAnit"></div></div>
-</div>
+  useEffect(() => { (async () => { try { const r = await window.storage.get(sk("data")); if (r?.value) setData({ ...INIT, ...JSON.parse(r.value) }); } catch (e) { } setLoading(false); })(); }, []);
+  const save = async (nd) => { setData(nd); try { await window.storage.set(sk("data"), JSON.stringify(nd)); } catch (e) { } };
+  const flash = (msg, type = "ok") => { setToast({ msg, type }); setTimeout(() => setToast(null), 2500); };
 
-<!-- REPORTS PAGE -->
-<div class="page" id="page-reports">
-  <div class="card" style="padding:14px;">
-    <div class="report-toggle">
-      <div class="msg-tab active" onclick="switchReportMode('month',this)">Monthly</div>
-      <div class="msg-tab" onclick="switchReportMode('range',this)">Date Range</div>
-    </div>
-    <div id="monthModeUI">
-      <div class="month-selector">
-        <button class="month-nav" onclick="changeMonth(-1)">‹</button>
-        <div class="month-title" id="monthTitle"></div>
-        <button class="month-nav" onclick="changeMonth(1)">›</button>
-      </div>
-    </div>
-    <div id="rangeModeUI" style="display:none;">
-      <div class="row" style="margin-bottom:0;">
-        <div><label>From</label><input type="date" id="rangeFrom" onchange="renderReports()" /></div>
-        <div><label>To</label><input type="date" id="rangeTo" onchange="renderReports()" /></div>
-      </div>
-    </div>
-  </div>
-  <div class="stats-grid">
-    <div class="stat-card"><div class="stat-val" id="statTotal">₹0</div><div class="stat-label">Total Revenue</div></div>
-    <div class="stat-card"><div class="stat-val" id="statCount">0</div><div class="stat-label">Appointments</div></div>
-    <div class="stat-card"><div class="stat-val" id="statPaid">₹0</div><div class="stat-label">Collected</div></div>
-    <div class="stat-card"><div class="stat-val" id="statPending">₹0</div><div class="stat-label">Pending</div></div>
-  </div>
-  <div class="card">
-    <div class="section-label" style="margin-bottom:12px;">Service Breakdown</div>
-    <div id="serviceBreakdown"></div>
-  </div>
-  <div class="card">
-    <div class="section-label" style="margin-bottom:12px;">All Payments</div>
-    <div id="paymentsList"></div>
-  </div>
-</div>
+  const updateClient = (phone, name, serviceNames, price, date) => {
+    const clients = [...data.clients]; const idx = clients.findIndex(c => c.phone === phone);
+    if (idx >= 0) { clients[idx].visits = (clients[idx].visits || 0) + 1; clients[idx].totalSpent = (clients[idx].totalSpent || 0) + price; clients[idx].lastVisit = date; clients[idx].name = name; if (!clients[idx].serviceHistory) clients[idx].serviceHistory = []; clients[idx].serviceHistory.push({ services: serviceNames, date, price }); }
+    else { clients.push({ phone, name, visits: 1, totalSpent: price, lastVisit: date, serviceHistory: [{ services: serviceNames, date, price }], birthday: "", notes: "", favColors: "", createdAt: new Date().toISOString() }); }
+    return clients;
+  };
 
-<script>
-  var selectedTech = 1, payStatus = 'paid', bookings = [], clients = {}, lastBooking = null;
-  var reportMonth = new Date().getMonth(), reportYear = new Date().getFullYear();
-  var reportMode = 'month';
-  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const toggleSvc = (svc) => setForm(f => ({ ...f, services: f.services.includes(svc.name) ? f.services.filter(s => s !== svc.name) : [...f.services, svc.name] }));
+  const totalMin = form.services.reduce((s, sn) => s + (SERVICES.find(sv => sv.name === sn)?.duration || 0), 0);
+  const autoPrice = form.services.reduce((s, sn) => s + (SERVICES.find(sv => sv.name === sn)?.price || 0), 0);
 
-  document.getElementById('apptDate').valueAsDate = new Date();
-  document.getElementById('apptTime').value = '10:00';
-  updateMonthTitle();
-
-  function showPage(name, btn) {
-    document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-    document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
-    document.getElementById('page-' + name).classList.add('active');
-    btn.classList.add('active');
-    if (name === 'clients') renderClients();
-    if (name === 'today') renderToday();
-    if (name === 'reports') renderReports();
-  }
-
-  function selectTech(el, num) {
-    document.querySelectorAll('.tech-tab').forEach(function(t) { t.classList.remove('active'); });
-    el.classList.add('active'); selectedTech = num;
-  }
-
-  function setPayStatus(s) {
-    payStatus = s;
-    document.getElementById('btnPaid').className = 'pay-status-btn' + (s === 'paid' ? ' sel-paid' : '');
-    document.getElementById('btnPending').className = 'pay-status-btn' + (s === 'pending' ? ' sel-pending' : '');
-  }
-
-  function toggleService(row) {
-    row.classList.toggle('active');
-    updateTotalDur();
-    autoFillPrice();
-  }
-
-  function updateTotalDur() {
-    var active = document.querySelectorAll('.svc-row.active');
-    if (!active.length) { document.getElementById('totalDur').textContent = ''; return; }
-    var total = 0;
-    active.forEach(function(r) { total += parseInt(r.querySelector('select').value); });
-    document.getElementById('totalDur').textContent = 'Total duration: ' + total + ' min';
-  }
-
-  function autoFillPrice() {
-    var active = document.querySelectorAll('.svc-row.active');
-    var total = 0;
-    active.forEach(function(r) { total += parseInt(r.dataset.price || 0); });
-    document.getElementById('payAmount').value = total || '';
-    document.getElementById('autoBill').textContent = total ? 'Total: ₹' + total.toLocaleString('en-IN') : '';
-  }
-
-  function updateBill() {
-    var v = parseInt(document.getElementById('payAmount').value) || 0;
-    document.getElementById('autoBill').textContent = v ? 'Total: ₹' + v.toLocaleString('en-IN') : '';
-  }
-
-  document.querySelectorAll('.svc-dur select').forEach(function(sel) {
-    sel.addEventListener('change', updateTotalDur);
-    sel.addEventListener('click', function(e) { e.stopPropagation(); });
-  });
-
-  function formatDate(ds) {
-    var d = new Date(ds + 'T00:00:00');
-    return d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  }
-
-  function formatTime(ts) {
-    var parts = ts.split(':'), hr = parseInt(parts[0]), m = parts[1];
-    var ampm = hr >= 12 ? 'PM' : 'AM', hr12 = hr % 12 || 12;
-    return hr12 + ':' + m + ' ' + ampm;
-  }
-
-  function toMins(t) { var p = t.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); }
-
-  function checkConflict(date, time, duration) {
-    var s = toMins(time), e = s + duration;
-    return bookings.filter(function(b) {
-      if (b.date !== date || b.tech !== selectedTech) return false;
-      var bs = toMins(b.time), be = bs + b.duration;
-      return s < be && e > bs;
-    });
-  }
-
-  function buildMsg(type, name, fd, ft, sl, dur) {
-    if (type === 'confirm') return 'Hi ' + name + '! \uD83C\uDF3F\u2728\n\nYour appointment at *The Nail Villa* has been successfully booked! \uD83D\uDC85\n\n\uD83D\uDCC5 *Day & Date:* ' + fd + '\n\u23F0 *Time:* ' + ft + '\n\uD83D\uDC86\u200D\u2640\uFE0F *Service:* ' + sl + '\n\u23F1\uFE0F *Duration:* ' + dur + ' mins\n\n\u23F3 Kindly arrive on time so we can give you the best service. If you need to reschedule, please inform us at least a few hours in advance. \uD83D\uDE4F\n\n\uD83E\uDD0D We look forward to pampering you! Thank you.\n\n\uD83D\uDCCD https://maps.app.goo.gl/afo8uQNsUaKDxkqt8';
-    if (type === 'reminder') return 'Hi ' + name + '! \uD83C\uDF3F\n\nThis is a gentle reminder that you have an appointment at *The Nail Villa* tomorrow at ' + ft + ' for your ' + sl + '. \uD83D\uDC85\n\nKindly confirm if you\'ll be able to make it. \uD83D\uDE4F\n\nLooking forward to seeing you! \uD83E\uDD0D';
-    if (type === 'thankyou') return 'Hi ' + name + '! \uD83C\uDF38\n\nThank you for visiting *The Nail Villa*! \u2728\n\nWe loved having you with us and hope you loved your nails. \uD83D\uDC85\n\nLooking forward to seeing you again soon! \uD83E\uDD0D\n\n\u2014 *The Nail Villa* \uD83C\uDF3F';
-  }
-
-  function showMsg(type, tab) {
-    if (!lastBooking) return;
-    document.querySelectorAll('.msg-tab').forEach(function(t) { t.classList.remove('active'); });
-    tab.classList.add('active');
-    var b = lastBooking;
-    var msg = buildMsg(type, b.firstName, b.fd, b.ft, b.sl, b.dur);
-    document.getElementById('msgPreview').innerText = msg;
-    document.getElementById('waBtn').href = 'https://wa.me/' + b.phone.replace(/[^0-9]/g,'') + '?text=' + encodeURIComponent(msg);
-  }
-
-  function confirmAppointment() {
-    var name = document.getElementById('clientName').value.trim();
-    var phone = document.getElementById('clientPhone').value.trim();
-    var date = document.getElementById('apptDate').value;
-    var time = document.getElementById('apptTime').value;
-    var notes = document.getElementById('notes').value.trim();
-    var amount = parseInt(document.getElementById('payAmount').value) || 0;
-    var method = document.getElementById('payMethod').value;
-    var activeRows = document.querySelectorAll('.svc-row.active');
-
-    if (!name || !phone || !date || !time || !activeRows.length) { alert('Please fill in all fields and select at least one service.'); return; }
-
-    var totalDur = 0, serviceNames = [];
-    activeRows.forEach(function(r) { serviceNames.push(r.querySelector('.svc-name').textContent); totalDur += parseInt(r.querySelector('select').value); });
-
-    var conflicts = checkConflict(date, time, totalDur);
-    var cb = document.getElementById('conflictBanner');
-    if (conflicts.length) { cb.textContent = '\u26A0\uFE0F ' + (selectedTech===1?'Rono':'Anit') + ' already has a booking at this time (' + conflicts[0].name + '). Please choose a different time or technician.'; cb.classList.add('show'); return; }
-    cb.classList.remove('show');
-
-    var fd = formatDate(date), ft = formatTime(time), sl = serviceNames.join(', ');
-    var firstName = name.split(' ')[0];
-    var techName = selectedTech === 1 ? 'Rono' : 'Anit';
-
-    bookings.push({ name: name, firstName: firstName, phone: phone, date: date, time: time, duration: totalDur, tech: selectedTech, services: sl, serviceNames: serviceNames, amount: amount, method: method, payStatus: payStatus, techName: techName });
-
-    var key = phone.replace(/[^0-9]/g, '');
-    if (!clients[key]) clients[key] = { name: name, phone: phone, visits: [], notes: '' };
-    clients[key].visits.unshift({ date: fd, time: ft, services: sl, tech: techName, amount: amount, payStatus: payStatus });
-    if (notes) clients[key].notes = notes;
-
-    lastBooking = { firstName: firstName, phone: phone, fd: fd, ft: ft, sl: sl, dur: totalDur };
-
-    var msg = buildMsg('confirm', firstName, fd, ft, sl, totalDur);
-    document.getElementById('msgPreview').innerText = msg;
-    document.querySelectorAll('#waCard .msg-tab').forEach(function(t, i) { t.classList.toggle('active', i===0); });
-    document.getElementById('waBtn').href = 'https://wa.me/' + phone.replace(/[^0-9]/g,'') + '?text=' + encodeURIComponent(msg);
-
-    var dateStr = date.replace(/-/g,'');
-    var hp = time.split(':'), h = hp[0], m = hp[1];
-    var startDT = dateStr + 'T' + h + m + '00';
-    var endMs = parseInt(h)*60 + parseInt(m) + totalDur;
-    var endH = String(Math.floor(endMs/60)%24).padStart(2,'0');
-    var endM = String(endMs%60).padStart(2,'0');
-    var endDT = dateStr + 'T' + endH + endM + '00';
-    var calTitle = encodeURIComponent('[' + techName + '] ' + name + ' – ' + sl + ' @ The Nail Villa');
-    var calDetails = encodeURIComponent('Technician: ' + techName + '\nServices: ' + sl + '\nDuration: ' + totalDur + ' mins\nAmount: ₹' + amount + ' (' + payStatus + ')\nClient: ' + name + '\nPhone: ' + phone + (notes ? '\nNotes: ' + notes : ''));
-    document.getElementById('calBtn').href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + calTitle + '&dates=' + startDT + '/' + endDT + '&details=' + calDetails + '&location=The+Nail+Villa';
-
-    document.getElementById('successBanner').classList.add('show');
-    document.getElementById('waCard').classList.add('show');
-    document.getElementById('calCard').classList.add('show');
-    document.getElementById('waCard').scrollIntoView({ behavior: 'smooth' });
-  }
-
-  function renderClients() {
-    var q = (document.getElementById('clientSearch').value || '').toLowerCase();
-    var list = document.getElementById('clientsList');
-    var all = Object.values(clients).filter(function(c) { return !q || c.name.toLowerCase().includes(q) || c.phone.includes(q); });
-    if (!all.length) { list.innerHTML = '<div class="empty-state">No clients yet \uD83C\uDF3F<br>Confirmed appointments will appear here.</div>'; return; }
-    list.innerHTML = all.map(function(c) {
-      return '<div class="client-card" onclick="this.classList.toggle(\'open\')">' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-        '<div><div class="client-name">' + c.name + ' <span class="visit-badge">' + c.visits.length + ' visit' + (c.visits.length!==1?'s':'') + '</span></div>' +
-        '<div class="client-meta">' + c.phone + '</div></div>' +
-        '<div style="color:#a8d5b5;font-size:18px;">›</div></div>' +
-        '<div class="client-detail">' +
-        (c.notes ? '<div style="font-size:11px;color:#7aaa88;font-weight:700;text-transform:uppercase;margin-bottom:4px;">Notes</div><div style="font-size:13px;color:#4a7c59;font-style:italic;margin-bottom:8px;">' + c.notes + '</div>' : '') +
-        '<div style="font-size:11px;color:#7aaa88;font-weight:700;text-transform:uppercase;margin-bottom:4px;">Visit History</div>' +
-        c.visits.map(function(v) { return '<div class="visit-row">\uD83D\uDCC5 ' + v.date + ' at ' + v.time + ' · ' + v.services + ' · ₹' + (v.amount||0).toLocaleString('en-IN') + ' <span class="' + (v.payStatus==='paid'?'paid-badge':'pending-badge') + '">' + v.payStatus + '</span></div>'; }).join('') +
-        '</div></div>';
-    }).join('');
-  }
-
-  function renderToday() {
-    var today = new Date().toISOString().split('T')[0];
-    var tb = bookings.filter(function(b) { return b.date === today; });
-    var rono = tb.filter(function(b) { return b.tech === 1; }).sort(function(a,b) { return toMins(a.time)-toMins(b.time); });
-    var anit = tb.filter(function(b) { return b.tech === 2; }).sort(function(a,b) { return toMins(a.time)-toMins(b.time); });
-    function render(arr, el) {
-      if (!arr.length) { document.getElementById(el).innerHTML = '<div style="font-size:13px;color:#a8d5b5;padding:8px 0;">No bookings today \uD83C\uDF3F</div>'; return; }
-      document.getElementById(el).innerHTML = arr.map(function(b) {
-        var idx = bookings.indexOf(b);
-        return '<div class="booking-item"><div><div class="bname">' + b.name + ' <span class="' + (b.payStatus==='paid'?'paid-badge':'pending-badge') + '">' + (b.payStatus==='paid'?'Paid':'Pending') + '</span></div>' +
-          '<div class="bdetail">' + formatTime(b.time) + ' · ' + b.duration + ' min · ' + b.services + ' · ₹' + (b.amount||0).toLocaleString('en-IN') + '</div></div>' +
-          '<button class="bdel" onclick="deleteBooking(event,' + idx + ')">✕</button></div>';
-      }).join('');
-    }
-    render(rono, 'todayRono'); render(anit, 'todayAnit');
-  }
-
-  function deleteBooking(e, i) { e.stopPropagation(); bookings.splice(i,1); renderToday(); }
-
-  function updateMonthTitle() {
-    document.getElementById('monthTitle').textContent = MONTHS[reportMonth] + ' ' + reportYear;
-  }
-
-  function changeMonth(dir) {
-    reportMonth += dir;
-    if (reportMonth > 11) { reportMonth = 0; reportYear++; }
-    if (reportMonth < 0) { reportMonth = 11; reportYear--; }
-    updateMonthTitle(); renderReports();
-  }
-
-  function switchReportMode(mode, btn) {
-    reportMode = mode;
-    document.querySelectorAll('.report-toggle .msg-tab').forEach(function(t) { t.classList.remove('active'); });
-    btn.classList.add('active');
-    document.getElementById('monthModeUI').style.display = mode === 'month' ? 'block' : 'none';
-    document.getElementById('rangeModeUI').style.display = mode === 'range' ? 'block' : 'none';
-    renderReports();
-  }
-
-  function getFilteredBookings() {
-    if (reportMode === 'month') {
-      return bookings.filter(function(b) {
-        var d = new Date(b.date + 'T00:00:00');
-        return d.getMonth() === reportMonth && d.getFullYear() === reportYear;
-      });
+  const handleBook = async () => {
+    if (!form.name || !form.phone || !form.date || !form.time || form.services.length === 0) { flash("Fill all fields", "err"); return; }
+    const price = form.price ? parseInt(form.price) : autoPrice;
+    if (editId) {
+      const bookings = data.bookings.map(b => b.id === editId ? { ...b, name: form.name, phone: form.phone, date: form.date, time: form.time, services: form.services, notes: form.notes, price } : b);
+      await save({ ...data, bookings }); flash("Updated!"); setEditId(null);
     } else {
-      var from = document.getElementById('rangeFrom').value;
-      var to = document.getElementById('rangeTo').value;
-      if (!from || !to) return [];
-      return bookings.filter(function(b) { return b.date >= from && b.date <= to; });
+      const booking = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), name: form.name, phone: form.phone, date: form.date, time: form.time, services: form.services, notes: form.notes, price, status: "confirmed", reminderSent: false, createdAt: new Date().toISOString() };
+      const clients = updateClient(form.phone, form.name, form.services, 0, form.date);
+      await save({ ...data, bookings: [...data.bookings, booking], clients });
+      openWA(form.phone, getConfMsg(booking)); setTimeout(() => openCal(booking), 1200);
+      flash("Booked! WhatsApp & Calendar opened");
     }
-  }
+    setForm({ name: "", phone: "", date: "", time: "", services: [], notes: "", price: "" });
+  };
 
-  function renderReports() {
-    var mb = getFilteredBookings();
-    var total = mb.reduce(function(s,b) { return s+(b.amount||0); }, 0);
-    var paid = mb.filter(function(b) { return b.payStatus==='paid'; }).reduce(function(s,b) { return s+(b.amount||0); }, 0);
-    var pending = mb.filter(function(b) { return b.payStatus==='pending'; }).reduce(function(s,b) { return s+(b.amount||0); }, 0);
-    document.getElementById('statTotal').textContent = '₹' + total.toLocaleString('en-IN');
-    document.getElementById('statCount').textContent = mb.length;
-    document.getElementById('statPaid').textContent = '₹' + paid.toLocaleString('en-IN');
-    document.getElementById('statPending').textContent = '₹' + pending.toLocaleString('en-IN');
+  const completeBooking = async (b) => {
+    const clients = updateClient(b.phone, b.name, b.services, b.price, b.date);
+    await save({ ...data, bookings: data.bookings.map(x => x.id === b.id ? { ...x, status: "completed" } : x), clients });
+    openWA(b.phone, getTyMsg(b)); flash("Done & thank you sent!");
+  };
 
-    var svcCount = {};
-    mb.forEach(function(b) { b.serviceNames.forEach(function(s) { svcCount[s] = (svcCount[s]||0)+1; }); });
-    var sbEl = document.getElementById('serviceBreakdown');
-    var entries = Object.entries(svcCount);
-    if (!entries.length) { sbEl.innerHTML = '<div class="empty-state">No data yet \uD83C\uDF3F</div>'; }
-    else sbEl.innerHTML = entries.sort(function(a,b){return b[1]-a[1];}).map(function(e) {
-      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #edf7f0;font-size:13px;"><span style="color:#2d4a35;">\uD83D\uDC85 ' + e[0] + '</span><span style="font-weight:700;color:#4a7c59;">' + e[1] + ' time' + (e[1]!==1?'s':'') + '</span></div>';
-    }).join('');
+  const markStatus = async (id, status) => { await save({ ...data, bookings: data.bookings.map(b => b.id === id ? { ...b, status } : b) }); };
+  const deleteBooking = async (id) => { await save({ ...data, bookings: data.bookings.filter(b => b.id !== id) }); flash("Deleted"); };
+  const startEdit = (b) => { setForm({ name: b.name, phone: b.phone, date: b.date, time: b.time, services: [...b.services], notes: b.notes || "", price: b.price?.toString() || "" }); setEditId(b.id); setTab("book"); };
+  const addExpense = async () => { if (!expForm.item || !expForm.amount) { flash("Fill item & amount", "err"); return; } await save({ ...data, expenses: [...data.expenses, { id: Date.now().toString(36), ...expForm, amount: parseInt(expForm.amount) }] }); setExpForm({ item: "", amount: "", date: todayStr(), category: "supplies" }); flash("Expense added!"); };
+  const deleteExpense = async (id) => { await save({ ...data, expenses: data.expenses.filter(e => e.id !== id) }); };
+  const addToGallery = async () => { if (!galleryForm.imageUrl) { flash("Add image URL", "err"); return; } await save({ ...data, gallery: [...data.gallery, { id: Date.now().toString(36), ...galleryForm, date: todayStr() }] }); setGalleryForm({ clientName: "", service: "", notes: "", imageUrl: "" }); flash("Photo added!"); };
+  const deleteGalleryItem = async (id) => { await save({ ...data, gallery: data.gallery.filter(g => g.id !== id) }); };
+  const updateClientField = async (phone, field, value) => { const clients = data.clients.map(c => c.phone === phone ? { ...c, [field]: value } : c); await save({ ...data, clients }); if (clientView) setClientView({ ...clientView, [field]: value }); flash("Saved!"); };
+  const addWaitlist = async () => { if (!waitForm.name || !waitForm.phone) { flash("Fill name & phone", "err"); return; } await save({ ...data, waitlist: [...data.waitlist, { id: Date.now().toString(36), ...waitForm, addedAt: new Date().toISOString() }] }); setWaitForm({ name: "", phone: "", service: "", notes: "" }); flash("Added!"); };
+  const removeWaitlist = async (id) => { await save({ ...data, waitlist: data.waitlist.filter(w => w.id !== id) }); };
+  const addPayment = async (bId, name, phone, services, amount, method, notes) => {
+    const payment = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), bookingId: bId || "", name, phone: phone || "", services: services || [], amount: parseInt(amount), method, notes: notes || "", date: todayStr(), time: new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true }), createdAt: new Date().toISOString() };
+    await save({ ...data, payments: [...data.payments, payment] });
+    flash("Payment recorded!");
+    return payment;
+  };
+  const deletePayment = async (id) => { await save({ ...data, payments: data.payments.filter(p => p.id !== id) }); flash("Payment deleted"); };
+  const fillFromPhone = (phone) => { const c = data.clients.find(cl => cl.phone === phone); if (c) setForm(f => ({ ...f, name: c.name })); };
 
-    var plEl = document.getElementById('paymentsList');
-    if (!mb.length) { plEl.innerHTML = '<div class="empty-state">No payments in this period \uD83C\uDF3F</div>'; return; }
-    plEl.innerHTML = mb.slice().sort(function(a,b){return b.date.localeCompare(a.date);}).map(function(b) {
-      return '<div class="payment-row"><div><div class="pname">' + b.name + ' <span class="tech-badge ' + (b.tech===1?'t1-badge':'t2-badge') + '">' + b.techName + '</span></div>' +
-        '<div class="pdetail">' + formatDate(b.date) + ' · ' + b.services + ' · ' + b.method + '</div></div>' +
-        '<div style="text-align:right;"><div class="pamount">₹' + (b.amount||0).toLocaleString('en-IN') + '</div>' +
-        '<span class="' + (b.payStatus==='paid'?'paid-badge':'pending-badge') + '">' + b.payStatus + '</span></div></div>';
-    }).join('');
-  }
+  const now = new Date();
+  const periodStart = dashPeriod === "week" ? daysAgo(7) : dashPeriod === "month" ? daysAgo(30) : daysAgo(365);
+  const periodBookings = data.bookings.filter(b => b.date >= periodStart && b.status === "completed");
+  const periodRevenue = periodBookings.reduce((s, b) => s + (b.price || 0), 0);
+  const periodExpenses = data.expenses.filter(e => e.date >= periodStart).reduce((s, e) => s + e.amount, 0);
+  const svcCount = {}; periodBookings.forEach(b => b.services.forEach(s => { svcCount[s] = (svcCount[s] || 0) + 1; }));
+  const topServices = Object.entries(svcCount).sort((a, b) => b[1] - a[1]);
+  const dayCount = {}; periodBookings.forEach(b => { const day = new Date(b.date + "T00:00:00").toLocaleDateString("en-IN", { weekday: "short" }); dayCount[day] = (dayCount[day] || 0) + 1; });
+  const busiestDay = Object.entries(dayCount).sort((a, b) => b[1] - a[1])[0];
+  const upcomingReminders = data.bookings.filter(b => { if (b.status !== "confirmed" || b.reminderSent) return false; const hrs = (new Date(`${b.date}T${b.time}:00`) - now) / 3600000; return hrs > 0 && hrs <= 15; });
+  const inactiveClients = data.clients.filter(c => c.lastVisit && (now - new Date(c.lastVisit + "T00:00:00")) / 86400000 >= 21);
+  const todayBdays = data.clients.filter(c => { if (!c.birthday) return false; const [m, d] = c.birthday.split("-").slice(1); const t = todayStr().split("-"); return m === t[1] && d === t[2]; });
+  const todayBookings = data.bookings.filter(b => b.date === todayStr() && b.status === "confirmed");
+  const filteredBookings = data.bookings.filter(b => { if (searchQ) { const q = searchQ.toLowerCase(); return b.name.toLowerCase().includes(q) || b.phone.includes(q); } return b.date === filterDate; });
 
-  function resetForm() {
-    document.getElementById('clientName').value = '';
-    document.getElementById('clientPhone').value = '';
-    document.getElementById('apptDate').valueAsDate = new Date();
-    document.getElementById('apptTime').value = '10:00';
-    document.getElementById('notes').value = '';
-    document.getElementById('payAmount').value = '';
-    document.getElementById('autoBill').textContent = '';
-    document.querySelectorAll('.svc-row').forEach(function(r) { r.classList.remove('active'); });
-    document.getElementById('totalDur').textContent = '';
-    document.getElementById('successBanner').classList.remove('show');
-    document.getElementById('conflictBanner').classList.remove('show');
-    document.getElementById('waCard').classList.remove('show');
-    document.getElementById('calCard').classList.remove('show');
-    setPayStatus('paid'); lastBooking = null;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-</script>
-</body>
-</html>
+  const accent = "#C75B3F";
+  const accentLight = "#FFF0EB";
+  const accentDark = "#8B3A25";
+  const rose = "#F9E8E4";
+  const cream = "#FDF8F5";
+
+  if (loading) return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 300, fontFamily: "'Georgia', serif", color: accent, fontSize: 16 }}>Loading your studio...</div>;
+
+  const TABS = [
+    ["book", "Book", "📅"], ["manage", "Manage", "📋"], ["reminders", "Alerts", "🔔"],
+    ["payments", "Payments", "💵"], ["dashboard", "Stats", "📊"], ["clients", "Clients", "👥"],
+    ["expenses", "Money", "💸"], ["promo", "Promo", "📣"], ["waitlist", "Waitlist", "⏳"]
+  ];
+
+  const Card = ({ children, style = {}, glow = false }) => (
+    <div style={{ background: "var(--color-background-primary)", border: `0.5px solid ${glow ? accent : "var(--color-border-tertiary)"}`, borderRadius: 16, padding: "16px 18px", marginBottom: 10, transition: "all 0.2s", ...(glow ? { boxShadow: `0 0 0 1px ${accent}22` } : {}), ...style }}>{children}</div>
+  );
+
+  const Btn = ({ children, onClick, disabled, variant = "primary", style = {} }) => {
+    const styles = {
+      primary: { background: `linear-gradient(135deg, ${accent}, #D4724F)`, color: "#fff", border: "none" },
+      outline: { background: "transparent", color: accent, border: `1.5px solid ${accent}` },
+      soft: { background: accentLight, color: accentDark, border: "none" },
+      ghost: { background: "var(--color-background-secondary)", color: "var(--color-text-secondary)", border: "none" },
+    };
+    return <button onClick={onClick} disabled={disabled} style={{ padding: "12px 18px", borderRadius: 12, fontSize: 14, fontWeight: 600, cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.5 : 1, width: "100%", letterSpacing: 0.3, transition: "all 0.15s", ...styles[variant], ...style }}>{children}</button>;
+  };
+
+  const MiniBtn = ({ children, onClick, bg = accentLight, color = accentDark, style = {} }) => (
+    <button onClick={onClick} style={{ padding: "7px 14px", borderRadius: 10, border: "none", background: bg, color, fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all 0.15s", ...style }}>{children}</button>
+  );
+
+  const Input = ({ label, ...props }) => (
+    <div style={{ marginBottom: 14 }}>
+      {label && <label style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: 6, display: "block", textTransform: "uppercase", letterSpacing: 0.8 }}>{label}</label>}
+      <input {...props} style={{ width: "100%", padding: "12px 14px", borderRadius: 12, border: "1px solid var(--color-border-tertiary)", fontSize: 14, background: "var(--color-background-primary)", color: "var(--color-text-primary)", boxSizing: "border-box", transition: "border 0.2s", outline: "none", ...props.style }} />
+    </div>
+  );
+
+  const StatusBadge = ({ status }) => {
+    const m = { confirmed: [accentLight, accentDark, "Confirmed"], completed: ["#E8F4ED", "#2D6A4F", "Completed"], cancelled: ["#FCE8E8", "#C0392B", "Cancelled"], noshow: ["#FEF3E2", "#B7791F", "No-show"] };
+    const [bg, col, label] = m[status] || m.confirmed;
+    return <span style={{ padding: "4px 12px", borderRadius: 20, fontSize: 11, fontWeight: 600, background: bg, color: col }}>{label}</span>;
+  };
+
+  const SectionTitle = ({ children, sub }) => (
+    <div style={{ marginBottom: 16 }}>
+      <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--color-text-primary)", margin: 0, fontFamily: "'Georgia', serif" }}>{children}</h2>
+      {sub && <p style={{ fontSize: 13, color: "var(--color-text-secondary)", margin: "4px 0 0", lineHeight: 1.4 }}>{sub}</p>}
+    </div>
+  );
+
+  const Metric = ({ value, label, icon }) => (
+    <div style={{ background: cream, borderRadius: 14, padding: "16px 12px", textAlign: "center" }}>
+      {icon && <div style={{ fontSize: 18, marginBottom: 4 }}>{icon}</div>}
+      <div style={{ fontSize: 22, fontWeight: 700, color: accent, fontFamily: "'Georgia', serif" }}>{value}</div>
+      <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginTop: 3, fontWeight: 500 }}>{label}</div>
+    </div>
+  );
+
+  return (
+    <div style={{ fontFamily: "'Segoe UI', -apple-system, sans-serif", color: "var(--color-text-primary)", maxWidth: 520, margin: "0 auto", paddingBottom: "2rem" }}>
+      {toast && <div style={{ position: "fixed", top: 16, left: "50%", transform: "translateX(-50%)", padding: "10px 24px", borderRadius: 14, fontSize: 13, fontWeight: 600, zIndex: 999, background: toast.type === "err" ? "#FCE8E8" : "#E8F4ED", color: toast.type === "err" ? "#C0392B" : "#2D6A4F", backdropFilter: "blur(10px)" }}>{toast.msg}</div>}
+
+      <div style={{ textAlign: "center", padding: "20px 0 6px" }}>
+        <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 4, color: "var(--color-text-secondary)", marginBottom: 4 }}>✦ STUDIO MANAGER ✦</div>
+        <div style={{ fontSize: 26, fontWeight: 700, letterSpacing: 1, color: accent, fontFamily: "'Georgia', serif" }}>The Nail Villa</div>
+        <div style={{ width: 40, height: 2, background: accent, margin: "8px auto 0", borderRadius: 1 }} />
+      </div>
+
+      {todayBdays.length > 0 && <div style={{ background: "#FEF3E2", borderRadius: 14, padding: "10px 16px", margin: "12px 0", fontSize: 13, color: "#B7791F", display: "flex", alignItems: "center", justifyContent: "space-between" }}><span>🎂 {todayBdays.map(c => firstName(c.name)).join(", ")}'s birthday!</span><MiniBtn bg="#B7791F" color="#fff" onClick={() => todayBdays.forEach(c => openWA(c.phone, getBdayMsg(c)))}>Send wish</MiniBtn></div>}
+
+      {todayBookings.length > 0 && tab !== "book" && <div style={{ background: accentLight, borderRadius: 14, padding: "12px 16px", margin: "8px 0 12px", fontSize: 13, color: accentDark }}>
+        <div style={{ fontWeight: 700, marginBottom: 4 }}>📌 Today — {todayBookings.length} appointment{todayBookings.length > 1 ? "s" : ""}</div>
+        {todayBookings.map(b => <div key={b.id} style={{ fontSize: 12, opacity: 0.85, marginTop: 2 }}>{fmtTime(b.time)} — {firstName(b.name)} · {b.services.join(", ")}</div>)}
+      </div>}
+
+      <div style={{ display: "flex", gap: 4, padding: "14px 0", overflowX: "auto", scrollbarWidth: "none" }}>
+        {TABS.map(([t, l, icon]) => (
+          <button key={t} onClick={() => { setTab(t); setSubTab(""); setClientView(null); if (t !== "book") { setEditId(null); setForm({ name: "", phone: "", date: "", time: "", services: [], notes: "", price: "" }); } }}
+            style={{ padding: "10px 8px", borderRadius: 14, border: tab === t ? `2px solid ${accent}` : "1px solid var(--color-border-tertiary)", background: tab === t ? accentLight : "transparent", color: tab === t ? accentDark : "var(--color-text-secondary)", fontSize: 11, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", minWidth: 48, textAlign: "center", position: "relative", transition: "all 0.2s" }}>
+            <div style={{ fontSize: 16 }}>{icon}</div>
+            <div style={{ marginTop: 2 }}>{l}</div>
+            {t === "reminders" && upcomingReminders.length > 0 && <div style={{ position: "absolute", top: -2, right: -2, width: 8, height: 8, borderRadius: 4, background: "#E74C3C" }} />}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ marginTop: 8 }}>
+
+        {tab === "book" && <div>
+          <SectionTitle sub={editId ? "Update this appointment" : "Create a new appointment"}>{editId ? "Edit Booking" : "New Booking"}</SectionTitle>
+          <Input label="WhatsApp number" placeholder="10-digit number" type="tel" value={form.phone} onChange={e => { const v = e.target.value.replace(/[^0-9+]/g, ""); setForm({ ...form, phone: v }); if (v.replace(/\D/g, "").length >= 10) fillFromPhone(v); }} />
+          <Input label="Client name" placeholder="Enter name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+
+          <div style={{ marginBottom: 14 }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 0.8 }}>Services</label>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {SERVICES.map(svc => {
+                const sel = form.services.includes(svc.name);
+                return <button key={svc.id} onClick={() => toggleSvc(svc)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "10px 16px", borderRadius: 14, border: sel ? `2px solid ${accent}` : "1px solid var(--color-border-tertiary)", background: sel ? accentLight : "var(--color-background-primary)", color: sel ? accentDark : "var(--color-text-primary)", fontSize: 13, fontWeight: sel ? 600 : 400, cursor: "pointer", transition: "all 0.15s" }}>
+                  <span>{svc.icon}</span> {svc.name} <span style={{ fontSize: 11, opacity: 0.6 }}>{fmtDur(svc.duration)}</span>
+                </button>;
+              })}
+            </div>
+            {form.services.length > 0 && <div style={{ marginTop: 10, padding: "10px 14px", borderRadius: 12, background: rose, fontSize: 13, fontWeight: 600, color: accentDark }}>
+              {form.services.length} service{form.services.length > 1 ? "s" : ""} · {fmtDur(totalMin)}
+            </div>}
+          </div>
+
+          <Input label="Date" type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
+
+          <div style={{ marginBottom: 14 }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: 0.8 }}>Time slot</label>
+            <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+              {["Morning", "Afternoon", "Evening"].map(p => {
+                const ranges = { Morning: [11, 13], Afternoon: [13, 17], Evening: [17, 21] };
+                const [s] = ranges[p];
+                const active = form.time && parseInt(form.time.split(":")[0]) >= ranges[p][0] && parseInt(form.time.split(":")[0]) < ranges[p][1];
+                return <button key={p} onClick={() => setForm({ ...form, time: `${s}:00` })} style={{ flex: 1, padding: "8px", borderRadius: 10, border: active ? `2px solid ${accent}` : "1px solid var(--color-border-tertiary)", background: active ? accentLight : "transparent", color: active ? accentDark : "var(--color-text-secondary)", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>{p}</button>;
+              })}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6 }}>
+              {(() => {
+                const slots = []; for (let h = 11; h < 21; h++) { if (h === 11) { slots.push("11:30"); } else { slots.push(`${h}:00`); if (h < 21) slots.push(`${h}:30`); } }
+                const booked = data.bookings.filter(b => b.date === form.date && b.status === "confirmed").map(b => b.time);
+                return slots.map(sl => {
+                  const bk = booked.includes(sl); const active = form.time === sl;
+                  return <button key={sl} disabled={bk} onClick={() => !bk && setForm({ ...form, time: sl })} style={{ padding: "11px 0", borderRadius: 12, border: active ? `2px solid ${accent}` : bk ? "1px solid var(--color-border-tertiary)" : "1px solid var(--color-border-tertiary)", background: active ? accent : bk ? "var(--color-background-tertiary)" : "var(--color-background-primary)", color: active ? "#fff" : bk ? "var(--color-text-tertiary)" : "var(--color-text-primary)", fontSize: 13, fontWeight: active ? 700 : 400, cursor: bk ? "not-allowed" : "pointer", opacity: bk ? 0.35 : 1, textAlign: "center", transition: "all 0.15s" }}>{fmtTime(sl)}{bk && <div style={{ fontSize: 9, marginTop: 1 }}>Booked</div>}</button>;
+                });
+              })()}
+            </div>
+          </div>
+
+          <Btn onClick={handleBook} disabled={!form.name || !form.phone || !form.date || !form.time || form.services.length === 0}>{editId ? "Update Booking" : "Book & Send WhatsApp + Calendar"}</Btn>
+          {editId && <div style={{ marginTop: 8 }}><Btn variant="outline" onClick={() => { setEditId(null); setForm({ name: "", phone: "", date: "", time: "", services: [], notes: "", price: "" }); }}>Cancel Edit</Btn></div>}
+        </div>}
+
+        {tab === "manage" && <div>
+          <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+            <input style={{ flex: 1, padding: "12px 14px", borderRadius: 12, border: "1px solid var(--color-border-tertiary)", fontSize: 14, background: "var(--color-background-primary)", color: "var(--color-text-primary)", outline: "none" }} placeholder="Search name or phone..." value={searchQ} onChange={e => setSearchQ(e.target.value)} />
+            {!searchQ && <input style={{ width: 145, padding: "12px", borderRadius: 12, border: "1px solid var(--color-border-tertiary)", fontSize: 13, background: "var(--color-background-primary)", color: "var(--color-text-primary)" }} type="date" value={filterDate} onChange={e => setFilterDate(e.target.value)} />}
+          </div>
+          <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginBottom: 10, fontWeight: 500 }}>{searchQ ? `${filteredBookings.length} results` : `${fmtDateNice(filterDate)} — ${filteredBookings.length} bookings`}</div>
+          {filteredBookings.length === 0 && <div style={{ textAlign: "center", padding: "3rem 0", color: "var(--color-text-tertiary)", fontSize: 14 }}>No bookings found</div>}
+          {[...filteredBookings].sort((a, b) => a.time.localeCompare(b.time)).map(b => (
+            <Card key={b.id}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <span style={{ fontSize: 16, fontWeight: 700, fontFamily: "'Georgia', serif" }}>{firstName(b.name)}</span>
+                <StatusBadge status={b.status} />
+              </div>
+              <div style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.8 }}>
+                📱 {b.phone}<br />📅 {fmtDateShort(b.date)} · ⏰ {fmtTime(b.time)}<br />💅 {b.services.join(", ")} · <span style={{ fontWeight: 600, color: accent }}>₹{b.price || 0}</span>
+              </div>
+              {b.notes && <div style={{ fontSize: 12, color: "var(--color-text-tertiary)", marginTop: 4 }}>📝 {b.notes}</div>}
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 10 }}>
+                {b.status === "confirmed" && <MiniBtn bg="#E8F4ED" color="#2D6A4F" onClick={() => completeBooking(b)}>✓ Done + Thanks</MiniBtn>}
+                <MiniBtn onClick={() => openWA(b.phone, getRemMsg(b))}>📩 Remind</MiniBtn>
+                <MiniBtn bg="#FEF3E2" color="#B7791F" onClick={() => startEdit(b)}>✏️ Edit</MiniBtn>
+                {b.status === "confirmed" && <MiniBtn bg="var(--color-background-secondary)" color="var(--color-text-secondary)" onClick={() => markStatus(b.id, "cancelled")}>Cancel</MiniBtn>}
+                {b.status === "confirmed" && <MiniBtn bg="var(--color-background-secondary)" color="var(--color-text-secondary)" onClick={() => markStatus(b.id, "noshow")}>No-show</MiniBtn>}
+                <MiniBtn bg="#FCE8E8" color="#C0392B" onClick={() => { if (confirm("Delete?")) deleteBooking(b.id); }}>🗑</MiniBtn>
+              </div>
+            </Card>
+          ))}
+        </div>}
+
+        {tab === "reminders" && <div>
+          <div style={{ display: "flex", gap: 6, marginBottom: 16 }}>
+            {[["rem", "Reminders"], ["thankyou", "Thank You"], ["inactive", "Follow-up"], ["bday", "Birthdays"]].map(([k, l]) => (
+              <button key={k} style={{ flex: 1, padding: "10px", borderRadius: 12, border: (subTab === k || (!subTab && k === "rem")) ? `2px solid ${accent}` : "1px solid var(--color-border-tertiary)", background: (subTab === k || (!subTab && k === "rem")) ? accentLight : "transparent", color: (subTab === k || (!subTab && k === "rem")) ? accentDark : "var(--color-text-secondary)", fontSize: 13, fontWeight: 600, cursor: "pointer" }} onClick={() => setSubTab(k)}>{l}</button>
+            ))}
+          </div>
+
+          {(subTab === "" || subTab === "rem") && <div>
+            <SectionTitle sub="Clients with appointments in the next 15 hours">Due Reminders ({upcomingReminders.length})</SectionTitle>
+            {upcomingReminders.length === 0 && <div style={{ textAlign: "center", padding: "2rem 0", color: "var(--color-text-tertiary)" }}>No reminders due right now ✨</div>}
+            {upcomingReminders.map(b => {
+              const hrs = Math.round((new Date(`${b.date}T${b.time}:00`) - now) / 3600000);
+              return <Card key={b.id} glow>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                  <span style={{ fontWeight: 700, fontSize: 15, fontFamily: "'Georgia', serif" }}>{firstName(b.name)}</span>
+                  <span style={{ fontSize: 12, color: accent, fontWeight: 700 }}>in ~{hrs}h</span>
+                </div>
+                <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 10 }}>⏰ {fmtTime(b.time)} · {b.services.join(", ")}</div>
+                <Btn style={{ padding: "10px" }} onClick={async () => { openWA(b.phone, getRemMsg(b)); await save({ ...data, bookings: data.bookings.map(x => x.id === b.id ? { ...x, reminderSent: true } : x) }); flash("Sent!"); }}>Send Reminder via WhatsApp</Btn>
+              </Card>;
+            })}
+            <div style={{ marginTop: 24 }}>
+              <SectionTitle>Today's Appointments ({todayBookings.length})</SectionTitle>
+              {todayBookings.map(b => <Card key={b.id}><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><div><div style={{ fontWeight: 600, fontSize: 14 }}>{firstName(b.name)}</div><div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{fmtTime(b.time)} · {b.services.join(", ")}</div></div>{b.reminderSent && <span style={{ fontSize: 11, color: "#2D6A4F", fontWeight: 600 }}>✓ Reminded</span>}</div></Card>)}
+            </div>
+          </div>}
+
+          {subTab === "thankyou" && <div>
+            <SectionTitle sub="Send a thank you message after their visit">Thank You Messages</SectionTitle>
+            {(() => {
+              const completedToday = data.bookings.filter(b => b.date === todayStr() && b.status === "completed");
+              const confirmedToday = data.bookings.filter(b => b.date === todayStr() && b.status === "confirmed");
+              const allToSend = [...confirmedToday, ...completedToday];
+              return <>
+                {allToSend.length === 0 && <div style={{ textAlign: "center", padding: "2rem 0", color: "var(--color-text-tertiary)" }}>No appointments today to send thank you for</div>}
+                {confirmedToday.length > 0 && <div style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: 10 }}>Today's appointments</div>}
+                {confirmedToday.map(b => (
+                  <Card key={b.id} glow>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                      <span style={{ fontSize: 15, fontWeight: 700, fontFamily: "'Georgia', serif" }}>{firstName(b.name)}</span>
+                      <span style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{fmtTime(b.time)} · {b.services.join(", ")}</span>
+                    </div>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <div style={{ flex: 1 }}><Btn style={{ padding: "10px", fontSize: 12 }} onClick={() => { completeBooking(b); }}>✓ Mark Done & Send Thank You</Btn></div>
+                    </div>
+                  </Card>
+                ))}
+                {completedToday.length > 0 && <div style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-secondary)", marginTop: 16, marginBottom: 10 }}>Completed today</div>}
+                {completedToday.map(b => (
+                  <Card key={b.id}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                      <span style={{ fontSize: 15, fontWeight: 700, fontFamily: "'Georgia', serif" }}>{firstName(b.name)}</span>
+                      <span style={{ fontSize: 11, color: "#2D6A4F", fontWeight: 600 }}>✓ Completed</span>
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginBottom: 8 }}>{fmtTime(b.time)} · {b.services.join(", ")}</div>
+                    <MiniBtn onClick={() => openWA(b.phone, getTyMsg(b))}>Send Thank You again</MiniBtn>
+                  </Card>
+                ))}
+                <Card style={{ background: cream, border: "none", marginTop: 16 }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.8 }}>Message preview</div>
+                  <div style={{ fontSize: 13, whiteSpace: "pre-line", lineHeight: 1.6 }}>Hi [Name],{"\n\n"}Thank you for visiting The Nail Villa 💅{"\n"}It was a pleasure having you!{"\n"}Hope you loved your nails—see you again soon 💖</div>
+                </Card>
+              </>;
+            })()}
+          </div>}
+
+          {subTab === "inactive" && <div>
+            <SectionTitle sub="Haven't visited in 3+ weeks">Follow Up ({inactiveClients.length})</SectionTitle>
+            {inactiveClients.length === 0 && <div style={{ textAlign: "center", padding: "2rem 0", color: "var(--color-text-tertiary)" }}>All clients are active!</div>}
+            {inactiveClients.map(c => {
+              const days = Math.round((now - new Date(c.lastVisit + "T00:00:00")) / 86400000);
+              return <Card key={c.phone}><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}><span style={{ fontWeight: 700, fontSize: 15, fontFamily: "'Georgia', serif" }}>{firstName(c.name)}</span><span style={{ fontSize: 12, color: accent }}>{days}d ago</span></div><div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 10 }}>{c.visits} visits · ₹{c.totalSpent} total</div><MiniBtn onClick={() => openWA(c.phone, getBookAgainMsg(c))}>Send "book again" message</MiniBtn></Card>;
+            })}
+          </div>}
+
+          {subTab === "bday" && <div>
+            <SectionTitle sub="Set birthdays in the Clients tab">Birthdays</SectionTitle>
+            {todayBdays.length > 0 && <Card style={{ background: "#FEF3E2", border: "none" }}><div style={{ fontWeight: 700, color: "#B7791F", marginBottom: 8 }}>🎂 Today!</div>{todayBdays.map(c => <div key={c.phone} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}><span>{firstName(c.name)}</span><MiniBtn bg="#B7791F" color="#fff" onClick={() => openWA(c.phone, getBdayMsg(c))}>Send wish</MiniBtn></div>)}</Card>}
+            {todayBdays.length === 0 && <div style={{ textAlign: "center", padding: "2rem 0", color: "var(--color-text-tertiary)" }}>No birthdays today</div>}
+          </div>}
+        </div>}
+
+        {tab === "payments" && <div>
+          <SectionTitle sub="Record daily payments & track monthly totals">Payment Records</SectionTitle>
+
+          <div style={{ display: "flex", gap: 6, marginBottom: 16 }}>
+            {[["day", "Daily"], ["month", "Monthly"]].map(([k, l]) => (
+              <button key={k} onClick={() => setSubTab(k)} style={{ flex: 1, padding: "10px", borderRadius: 12, border: (subTab === k || (!subTab && k === "day")) ? `2px solid ${accent}` : "1px solid var(--color-border-tertiary)", background: (subTab === k || (!subTab && k === "day")) ? accentLight : "transparent", color: (subTab === k || (!subTab && k === "day")) ? accentDark : "var(--color-text-secondary)", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>{l}</button>
+            ))}
+          </div>
+
+          {(subTab === "" || subTab === "day") && <div>
+            <Card style={{ background: cream, border: "none", marginBottom: 16 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 10 }}>Record a payment</div>
+              <div style={{ marginBottom: 10 }}>
+                <label style={{ fontSize: 11, fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: 4, display: "block" }}>Client (from today's bookings)</label>
+                <select style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid var(--color-border-tertiary)", fontSize: 13, background: "var(--color-background-primary)", color: "var(--color-text-primary)" }} value={payForm.bookingId} onChange={e => {
+                  const bk = data.bookings.find(b => b.id === e.target.value);
+                  if (bk) setPayForm({ ...payForm, bookingId: e.target.value, amount: bk.price?.toString() || "" });
+                  else setPayForm({ ...payForm, bookingId: e.target.value });
+                }}>
+                  <option value="">Select or add manually below</option>
+                  {data.bookings.filter(b => b.date === todayStr()).map(b => <option key={b.id} value={b.id}>{firstName(b.name)} — {b.services.join(", ")} (₹{b.price})</option>)}
+                </select>
+              </div>
+              {!payForm.bookingId && <Input label="Client name (manual)" placeholder="Name" value={payForm.notes} onChange={e => setPayForm({ ...payForm, notes: e.target.value })} />}
+              <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: 4, display: "block" }}>Amount</label>
+                  <input style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid var(--color-border-tertiary)", fontSize: 14, background: "var(--color-background-primary)", color: "var(--color-text-primary)", boxSizing: "border-box" }} placeholder="₹" type="number" value={payForm.amount} onChange={e => setPayForm({ ...payForm, amount: e.target.value })} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: 4, display: "block" }}>Method</label>
+                  <select style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid var(--color-border-tertiary)", fontSize: 13, background: "var(--color-background-primary)", color: "var(--color-text-primary)" }} value={payForm.method} onChange={e => setPayForm({ ...payForm, method: e.target.value })}>
+                    <option value="cash">💵 Cash</option>
+                    <option value="upi">📱 UPI</option>
+                    <option value="card">💳 Card</option>
+                    <option value="other">🔄 Other</option>
+                  </select>
+                </div>
+              </div>
+              <Btn onClick={async () => {
+                if (!payForm.amount) { flash("Enter amount", "err"); return; }
+                const bk = data.bookings.find(b => b.id === payForm.bookingId);
+                const name = bk ? bk.name : (payForm.notes || "Walk-in");
+                const phone = bk ? bk.phone : "";
+                const services = bk ? bk.services : [];
+                await addPayment(payForm.bookingId, name, phone, services, payForm.amount, payForm.method, payForm.notes);
+                setPayForm({ bookingId: "", amount: "", method: "cash", notes: "" });
+              }}>Record Payment</Btn>
+            </Card>
+
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+              <span style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Georgia', serif" }}>Daily view</span>
+              <input style={{ padding: "8px 12px", borderRadius: 10, border: "1px solid var(--color-border-tertiary)", fontSize: 13, background: "var(--color-background-primary)", color: "var(--color-text-primary)" }} type="date" value={payDay} onChange={e => setPayDay(e.target.value)} />
+            </div>
+
+            {(() => {
+              const dayPayments = data.payments.filter(p => p.date === payDay);
+              const dayTotal = dayPayments.reduce((s, p) => s + p.amount, 0);
+              const cashTotal = dayPayments.filter(p => p.method === "cash").reduce((s, p) => s + p.amount, 0);
+              const upiTotal = dayPayments.filter(p => p.method === "upi").reduce((s, p) => s + p.amount, 0);
+              const cardTotal = dayPayments.filter(p => p.method === "card").reduce((s, p) => s + p.amount, 0);
+              return <>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
+                  <Metric icon="💵" value={`₹${cashTotal.toLocaleString()}`} label="Cash" />
+                  <Metric icon="📱" value={`₹${upiTotal.toLocaleString()}`} label="UPI" />
+                  <Metric icon="💳" value={`₹${cardTotal.toLocaleString()}`} label="Card" />
+                </div>
+                <div style={{ background: accentLight, borderRadius: 14, padding: "14px 18px", marginBottom: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: accentDark }}>Day total</span>
+                  <span style={{ fontSize: 22, fontWeight: 700, color: accent, fontFamily: "'Georgia', serif" }}>₹{dayTotal.toLocaleString()}</span>
+                </div>
+                {dayPayments.length === 0 && <div style={{ textAlign: "center", padding: "2rem 0", color: "var(--color-text-tertiary)" }}>No payments recorded for this day</div>}
+                {dayPayments.map(p => (
+                  <Card key={p.id}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                      <span style={{ fontSize: 15, fontWeight: 700, fontFamily: "'Georgia', serif" }}>{firstName(p.name)}</span>
+                      <span style={{ fontSize: 16, fontWeight: 700, color: accent }}>₹{p.amount.toLocaleString()}</span>
+                    </div>
+                    {p.services?.length > 0 && <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginBottom: 2 }}>💅 {p.services.join(", ")}</div>}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>
+                        <span style={{ padding: "2px 8px", borderRadius: 8, background: p.method === "cash" ? "#E8F4ED" : p.method === "upi" ? "#E6F0FB" : "#FEF3E2", color: p.method === "cash" ? "#2D6A4F" : p.method === "upi" ? "#1A5FA5" : "#B7791F", fontSize: 11, fontWeight: 600 }}>{p.method === "cash" ? "💵 Cash" : p.method === "upi" ? "📱 UPI" : p.method === "card" ? "💳 Card" : "🔄 Other"}</span>
+                        <span style={{ marginLeft: 8 }}>{p.time}</span>
+                      </div>
+                      <MiniBtn bg="#FCE8E8" color="#C0392B" onClick={() => deletePayment(p.id)} style={{ fontSize: 10 }}>×</MiniBtn>
+                    </div>
+                  </Card>
+                ))}
+              </>;
+            })()}
+          </div>}
+
+          {subTab === "month" && <div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+              <span style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Georgia', serif" }}>Monthly summary</span>
+              <input style={{ padding: "8px 12px", borderRadius: 10, border: "1px solid var(--color-border-tertiary)", fontSize: 13, background: "var(--color-background-primary)", color: "var(--color-text-primary)" }} type="month" value={payMonth} onChange={e => setPayMonth(e.target.value)} />
+            </div>
+
+            {(() => {
+              const monthPayments = data.payments.filter(p => p.date.startsWith(payMonth));
+              const monthTotal = monthPayments.reduce((s, p) => s + p.amount, 0);
+              const cashTotal = monthPayments.filter(p => p.method === "cash").reduce((s, p) => s + p.amount, 0);
+              const upiTotal = monthPayments.filter(p => p.method === "upi").reduce((s, p) => s + p.amount, 0);
+              const cardTotal = monthPayments.filter(p => p.method === "card").reduce((s, p) => s + p.amount, 0);
+              const monthExpenses = data.expenses.filter(e => e.date.startsWith(payMonth)).reduce((s, e) => s + e.amount, 0);
+
+              const dayWise = {};
+              monthPayments.forEach(p => { if (!dayWise[p.date]) dayWise[p.date] = { payments: [], total: 0 }; dayWise[p.date].payments.push(p); dayWise[p.date].total += p.amount; });
+              const sortedDays = Object.keys(dayWise).sort().reverse();
+
+              return <>
+                <Card style={{ background: accentLight, border: "none", marginBottom: 16, textAlign: "center" }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: accentDark, marginBottom: 4 }}>Total revenue this month</div>
+                  <div style={{ fontSize: 32, fontWeight: 700, color: accent, fontFamily: "'Georgia', serif" }}>₹{monthTotal.toLocaleString()}</div>
+                  <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 10, fontSize: 13 }}>
+                    <span style={{ color: "#2D6A4F", fontWeight: 600 }}>- ₹{monthExpenses.toLocaleString()} expenses</span>
+                    <span style={{ color: accent, fontWeight: 700 }}>= ₹{(monthTotal - monthExpenses).toLocaleString()} profit</span>
+                  </div>
+                </Card>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
+                  <Metric icon="💵" value={`₹${cashTotal.toLocaleString()}`} label="Cash" />
+                  <Metric icon="📱" value={`₹${upiTotal.toLocaleString()}`} label="UPI" />
+                  <Metric icon="💳" value={`₹${cardTotal.toLocaleString()}`} label="Card" />
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 20 }}>
+                  <Metric value={monthPayments.length} label="Total payments" />
+                  <Metric value={monthPayments.length ? `₹${Math.round(monthTotal / monthPayments.length)}` : "-"} label="Avg per client" />
+                </div>
+
+                <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Georgia', serif", marginBottom: 12 }}>Day-by-day breakdown</div>
+                {sortedDays.length === 0 && <div style={{ textAlign: "center", padding: "2rem 0", color: "var(--color-text-tertiary)" }}>No payments this month</div>}
+                {sortedDays.map(day => (
+                  <Card key={day}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary)", fontFamily: "'Georgia', serif" }}>{fmtDateShort(day)}</span>
+                      <span style={{ fontSize: 16, fontWeight: 700, color: accent }}>₹{dayWise[day].total.toLocaleString()}</span>
+                    </div>
+                    {dayWise[day].payments.map(p => (
+                      <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderTop: "0.5px solid var(--color-border-tertiary)" }}>
+                        <div>
+                          <span style={{ fontSize: 13, fontWeight: 600 }}>{firstName(p.name)}</span>
+                          {p.services?.length > 0 && <span style={{ fontSize: 11, color: "var(--color-text-secondary)", marginLeft: 6 }}>{p.services.join(", ")}</span>}
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={{ padding: "2px 6px", borderRadius: 6, fontSize: 10, fontWeight: 600, background: p.method === "cash" ? "#E8F4ED" : p.method === "upi" ? "#E6F0FB" : "#FEF3E2", color: p.method === "cash" ? "#2D6A4F" : p.method === "upi" ? "#1A5FA5" : "#B7791F" }}>{p.method}</span>
+                          <span style={{ fontSize: 14, fontWeight: 700, color: accent }}>₹{p.amount.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </Card>
+                ))}
+              </>;
+            })()}
+          </div>}
+        </div>}
+
+        {tab === "dashboard" && <div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <SectionTitle>Dashboard</SectionTitle>
+            <div style={{ display: "flex", gap: 4 }}>
+              {[["week", "7d"], ["month", "30d"], ["year", "1y"]].map(([k, l]) => (
+                <button key={k} onClick={() => setDashPeriod(k)} style={{ padding: "6px 14px", borderRadius: 10, border: dashPeriod === k ? `2px solid ${accent}` : "1px solid var(--color-border-tertiary)", background: dashPeriod === k ? accentLight : "transparent", color: dashPeriod === k ? accentDark : "var(--color-text-secondary)", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>{l}</button>
+              ))}
+            </div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+            <Metric icon="💰" value={`₹${periodRevenue.toLocaleString()}`} label="Revenue" />
+            <Metric icon="📈" value={`₹${(periodRevenue - periodExpenses).toLocaleString()}`} label="Profit" />
+            <Metric icon="📅" value={periodBookings.length} label="Appointments" />
+            <Metric icon="💸" value={`₹${periodExpenses.toLocaleString()}`} label="Expenses" />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
+            <Metric value={periodBookings.length ? `₹${Math.round(periodRevenue / periodBookings.length)}` : "-"} label="Avg per visit" />
+            <Metric value={data.clients.length} label="Total clients" />
+          </div>
+          {topServices.length > 0 && <Card><div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12, fontFamily: "'Georgia', serif" }}>Top services</div>{topServices.slice(0, 5).map(([name, count]) => <div key={name} style={{ marginBottom: 10 }}><div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 4 }}><span>{name}</span><span style={{ color: "var(--color-text-secondary)", fontWeight: 600 }}>{count}x</span></div><div style={{ height: 8, borderRadius: 4, background: "var(--color-background-secondary)" }}><div style={{ height: 8, borderRadius: 4, background: `linear-gradient(90deg, ${accent}, #D4724F)`, width: `${count / topServices[0][1] * 100}%`, transition: "width 0.5s" }} /></div></div>)}</Card>}
+          {busiestDay && <div style={{ fontSize: 14, color: "var(--color-text-secondary)", marginTop: 8 }}>📊 Busiest day: <strong style={{ color: "var(--color-text-primary)" }}>{busiestDay[0]}</strong> ({busiestDay[1]} bookings)</div>}
+        </div>}
+
+        {tab === "clients" && !clientView && <div>
+          <Input placeholder="Search clients..." value={searchQ} onChange={e => setSearchQ(e.target.value)} />
+          {data.clients.filter(c => !searchQ || c.name.toLowerCase().includes(searchQ.toLowerCase()) || c.phone.includes(searchQ)).sort((a, b) => (b.visits || 0) - (a.visits || 0)).map(c => (
+            <Card key={c.phone} style={{ cursor: "pointer" }}>
+              <div onClick={() => setClientView(c)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 22, background: accentLight, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 700, color: accent, fontFamily: "'Georgia', serif" }}>{firstName(c.name).charAt(0)}</div>
+                  <div><div style={{ fontSize: 15, fontWeight: 700, fontFamily: "'Georgia', serif" }}>{firstName(c.name)}</div><div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{c.phone} · {c.visits || 0} visits · ₹{(c.totalSpent || 0).toLocaleString()}</div>{c.visits >= 5 && <span style={{ display: "inline-block", marginTop: 3, padding: "2px 10px", borderRadius: 10, fontSize: 10, fontWeight: 600, background: "#FEF3E2", color: "#B7791F" }}>⭐ Loyal</span>}</div>
+                </div>
+                <span style={{ fontSize: 18, color: "var(--color-text-tertiary)" }}>›</span>
+              </div>
+            </Card>
+          ))}
+          {data.clients.length === 0 && <div style={{ textAlign: "center", padding: "3rem 0", color: "var(--color-text-tertiary)" }}>Clients will appear after their first booking</div>}
+        </div>}
+
+        {tab === "clients" && clientView && <div>
+          <MiniBtn bg="var(--color-background-secondary)" color="var(--color-text-secondary)" onClick={() => setClientView(null)}>← Back</MiniBtn>
+          <div style={{ textAlign: "center", margin: "20px 0" }}>
+            <div style={{ width: 64, height: 64, borderRadius: 32, background: accentLight, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 10px", fontSize: 24, fontWeight: 700, color: accent, fontFamily: "'Georgia', serif" }}>{firstName(clientView.name).charAt(0)}</div>
+            <div style={{ fontSize: 22, fontWeight: 700, fontFamily: "'Georgia', serif" }}>{firstName(clientView.name)}</div>
+            <div style={{ fontSize: 14, color: "var(--color-text-secondary)" }}>{clientView.phone}</div>
+            {(clientView.visits || 0) >= 5 && <span style={{ display: "inline-block", marginTop: 8, padding: "4px 14px", borderRadius: 14, fontSize: 12, fontWeight: 600, background: "#FEF3E2", color: "#B7791F" }}>⭐ Loyal client</span>}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 20 }}>
+            <Metric value={clientView.visits || 0} label="Visits" />
+            <Metric value={`₹${(clientView.totalSpent || 0).toLocaleString()}`} label="Spent" />
+            <Metric value={clientView.lastVisit ? fmtDateShort(clientView.lastVisit) : "-"} label="Last visit" />
+          </div>
+          <Card><Input label="Birthday" type="date" value={clientView.birthday || ""} onChange={e => updateClientField(clientView.phone, "birthday", e.target.value)} /></Card>
+          <Card><Input label="Favorite colors / preferences" value={clientView.favColors || ""} placeholder="Pink, French tips..." onChange={e => updateClientField(clientView.phone, "favColors", e.target.value)} /></Card>
+          <Card><Input label="Notes" value={clientView.notes || ""} placeholder="Any notes..." onChange={e => updateClientField(clientView.phone, "notes", e.target.value)} /></Card>
+          {clientView.serviceHistory?.length > 0 && <div style={{ marginTop: 16 }}><SectionTitle>Visit History</SectionTitle>{[...clientView.serviceHistory].reverse().map((v, i) => <Card key={i}><div style={{ display: "flex", justifyContent: "space-between" }}><div><div style={{ fontSize: 13, fontWeight: 600 }}>{v.services.join(", ")}</div><div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{fmtDateShort(v.date)}</div></div><span style={{ fontSize: 14, fontWeight: 700, color: accent }}>₹{v.price}</span></div></Card>)}</div>}
+          <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+            <div style={{ flex: 1 }}><Btn variant="soft" onClick={() => openWA(clientView.phone, getBookAgainMsg(clientView))} style={{ fontSize: 12, padding: 10 }}>📩 Book again</Btn></div>
+            <div style={{ flex: 1 }}><Btn variant="soft" onClick={() => openWA(clientView.phone, getBdayMsg(clientView))} style={{ fontSize: 12, padding: 10 }}>🎂 Birthday wish</Btn></div>
+          </div>
+        </div>}
+
+        {tab === "expenses" && <div>
+          <SectionTitle sub="Track your supplies, tools & costs">Expenses</SectionTitle>
+          <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+            <Input placeholder="Item name" value={expForm.item} onChange={e => setExpForm({ ...expForm, item: e.target.value })} style={{ flex: 2 }} />
+            <Input placeholder="₹ Amount" type="number" value={expForm.amount} onChange={e => setExpForm({ ...expForm, amount: e.target.value })} style={{ flex: 1 }} />
+          </div>
+          <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+            <input style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1px solid var(--color-border-tertiary)", fontSize: 13, background: "var(--color-background-primary)", color: "var(--color-text-primary)" }} type="date" value={expForm.date} onChange={e => setExpForm({ ...expForm, date: e.target.value })} />
+            <select style={{ flex: 1, padding: "12px", borderRadius: 12, border: "1px solid var(--color-border-tertiary)", fontSize: 13, background: "var(--color-background-primary)", color: "var(--color-text-primary)" }} value={expForm.category} onChange={e => setExpForm({ ...expForm, category: e.target.value })}>
+              <option value="supplies">Supplies</option><option value="tools">Tools</option><option value="rent">Rent</option><option value="marketing">Marketing</option><option value="other">Other</option>
+            </select>
+          </div>
+          <Btn onClick={addExpense} style={{ marginBottom: 20 }}>Add Expense</Btn>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
+            <Metric icon="📅" value={`₹${data.expenses.filter(e => e.date >= daysAgo(30)).reduce((s, e) => s + e.amount, 0).toLocaleString()}`} label="This month" />
+            <Metric icon="📊" value={`₹${data.expenses.reduce((s, e) => s + e.amount, 0).toLocaleString()}`} label="All time" />
+          </div>
+          {[...data.expenses].reverse().map(e => <Card key={e.id}><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><div><div style={{ fontSize: 14, fontWeight: 600 }}>{e.item}</div><div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{fmtDateShort(e.date)} · {e.category}</div></div><div style={{ display: "flex", alignItems: "center", gap: 10 }}><span style={{ fontSize: 14, fontWeight: 700, color: "#C0392B" }}>₹{e.amount}</span><MiniBtn bg="#FCE8E8" color="#C0392B" onClick={() => deleteExpense(e.id)}>×</MiniBtn></div></div></Card>)}
+        </div>}
+
+        {tab === "promo" && <div>
+          <SectionTitle sub="Send offers to all your clients at once">Promotions</SectionTitle>
+          <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
+            {[["🎉 Festive offer", `🌸 Festive Special at *The Nail Villa*!\n\nGet 20% off on all nail extensions this week! Book now! 💅✨\n\n${MAP_LINK}`], ["✨ New service", `✨ New at *The Nail Villa*!\n\nWe've introduced new designs & premium gel polishes! Come check them out! 💅🌸\n\n${MAP_LINK}`], ["🔥 Weekend deal", `💖 Weekend Special at *The Nail Villa*!\n\nBook any 2 services and get a free upgrade! Limited slots! 💅\n\n${MAP_LINK}`]].map(([l, m]) => <MiniBtn key={l} onClick={() => setPromoMsg(m)}>{l}</MiniBtn>)}
+          </div>
+          <textarea style={{ width: "100%", padding: "14px", borderRadius: 14, border: "1px solid var(--color-border-tertiary)", fontSize: 14, background: "var(--color-background-primary)", color: "var(--color-text-primary)", height: 140, resize: "vertical", outline: "none", boxSizing: "border-box", fontFamily: "inherit" }} placeholder="Type your promotional message..." value={promoMsg} onChange={e => setPromoMsg(e.target.value)} />
+          <div style={{ fontSize: 12, color: "var(--color-text-secondary)", margin: "8px 0 14px" }}>{data.clients.length} clients will receive this</div>
+          <Btn disabled={!promoMsg} onClick={() => { if (!confirm(`Send to ${data.clients.length} clients?`)) return; data.clients.forEach((c, i) => setTimeout(() => openWA(c.phone, promoMsg), i * 800)); flash(`Sending to ${data.clients.length} clients...`); }}>Send to All Clients ({data.clients.length})</Btn>
+          <div style={{ marginTop: 24 }}>
+            <SectionTitle>Send to Specific Client</SectionTitle>
+            {data.clients.map(c => <Card key={c.phone}><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><div><div style={{ fontSize: 14, fontWeight: 600 }}>{firstName(c.name)}</div><div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{c.phone}</div></div><MiniBtn disabled={!promoMsg} onClick={() => promoMsg && openWA(c.phone, promoMsg)}>Send</MiniBtn></div></Card>)}
+          </div>
+        </div>}
+
+        {tab === "waitlist" && <div>
+          <SectionTitle sub="When a slot opens, notify these clients">Waitlist</SectionTitle>
+          <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+            <Input placeholder="Name" value={waitForm.name} onChange={e => setWaitForm({ ...waitForm, name: e.target.value })} />
+            <Input placeholder="Phone" value={waitForm.phone} onChange={e => setWaitForm({ ...waitForm, phone: e.target.value.replace(/[^0-9+]/g, "") })} />
+          </div>
+          <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+            <div style={{ flex: 1 }}>
+              <select style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid var(--color-border-tertiary)", fontSize: 13, background: "var(--color-background-primary)", color: "var(--color-text-primary)" }} value={waitForm.service} onChange={e => setWaitForm({ ...waitForm, service: e.target.value })}>
+                <option value="">Service wanted</option>{SERVICES.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+              </select>
+            </div>
+            <Input placeholder="Notes" value={waitForm.notes} onChange={e => setWaitForm({ ...waitForm, notes: e.target.value })} style={{ flex: 1 }} />
+          </div>
+          <Btn onClick={addWaitlist} style={{ marginBottom: 20 }}>Add to Waitlist</Btn>
+          {data.waitlist.length === 0 && <div style={{ textAlign: "center", padding: "2rem 0", color: "var(--color-text-tertiary)" }}>Waitlist is empty</div>}
+          {data.waitlist.map(w => <Card key={w.id}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}><span style={{ fontWeight: 700, fontSize: 15, fontFamily: "'Georgia', serif" }}>{firstName(w.name)}</span><span style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{w.phone}</span></div>
+            {w.service && <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 2 }}>Wants: {w.service}</div>}
+            {w.notes && <div style={{ fontSize: 12, color: "var(--color-text-tertiary)", marginBottom: 8 }}>{w.notes}</div>}
+            <div style={{ display: "flex", gap: 6 }}>
+              <MiniBtn bg="#E8F4ED" color="#2D6A4F" onClick={() => { setForm({ name: w.name, phone: w.phone, date: "", time: "", services: w.service ? [w.service] : [], notes: w.notes || "", price: "" }); setTab("book"); }}>Book now</MiniBtn>
+              <MiniBtn onClick={() => openWA(w.phone, `Hi ${firstName(w.name)}! 🌸\n\nA slot has opened up at *The Nail Villa*! Would you like to book?\n\nLet us know your preferred date & time! 💅`)}>Notify via WhatsApp</MiniBtn>
+              <MiniBtn bg="#FCE8E8" color="#C0392B" onClick={() => removeWaitlist(w.id)}>Remove</MiniBtn>
+            </div>
+          </Card>)}
+        </div>}
+      </div>
+
+      <div style={{ textAlign: "center", marginTop: 32, fontSize: 11, color: "var(--color-text-tertiary)", fontFamily: "'Georgia', serif" }}>✦ The Nail Villa · Pimpri-Chinchwad, Pune ✦</div>
+    </div>
+  );
+}
